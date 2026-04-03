@@ -26,6 +26,7 @@ HTML_TEMPLATE = Template(
   <meta charset=\"utf-8\">
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <title>$title</title>
+  <link rel=\"icon\" href=\"data:,\">
   <style>
     :root {
       color-scheme: dark;
@@ -109,7 +110,8 @@ HTML_TEMPLATE = Template(
       }
     }, false);
 
-    const Module = {
+    var Module = window.Module || {};
+    Object.assign(Module, {
       arguments: ['./'],
       print: console.log.bind(console),
       printErr: console.error.bind(console),
@@ -139,7 +141,8 @@ HTML_TEMPLATE = Template(
         const done = this.totalDependencies - left;
         this.setStatus(left ? `Preparing... (${done}/${this.totalDependencies})` : 'All downloads complete.');
       }
-    };
+    });
+    window.Module = Module;
 
     Module.setStatus('Downloading...');
     window.onerror = function () {
