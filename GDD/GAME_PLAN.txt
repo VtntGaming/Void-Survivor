@@ -1,0 +1,114 @@
+================================================================================
+                    GAME PLAN & PROGRESS TRACKER
+                    Love2D Game Project
+================================================================================
+
+================================================================================
+[GAME IDEA]
+================================================================================
+Title: "Void Survivor"
+Genre: Top-down Arena Survival Shooter
+Engine: Love2D 11.5
+
+Concept:
+- Player controls a spaceship/character in a 2D arena
+- Waves of enemies spawn from edges of the screen
+- Player must survive as long as possible, earning score
+- Enemies get harder each wave (faster, more health, more quantity)
+- Player can collect power-ups dropped by enemies
+- Simple but addictive arcade-style gameplay
+
+================================================================================
+[GAME DESIGN]
+================================================================================
+
+--- PLAYER ---
+- Moves with WASD or Arrow keys
+- Aims with mouse
+- Shoots with left mouse button (auto-fire option)
+- Has health bar (starts with 100 HP)
+- Speed: moderate, responsive controls
+- Invincibility frames after taking damage (0.5s)
+
+--- ENEMIES ---
+Type 1 - Chaser (Red): Moves directly toward player, low HP
+Type 2 - Shooter (Purple): Keeps distance, shoots projectiles at player
+Type 3 - Tank (Orange): Slow, high HP, large size, high damage on contact
+Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
+
+--- WAVES ---
+- Wave 1-3: Only Chasers
+- Wave 4-6: Chasers + Shooters
+- Wave 7-9: Chasers + Shooters + Tanks
+- Wave 10+: All types, increasing quantity
+- 5 second break between waves
+- Enemy count = base_count + (wave * 2)
+
+--- POWER-UPS ---
+- Health Pack (Green +): Restores 25 HP
+- Speed Boost (Blue): +50% speed for 5 seconds
+- Rapid Fire (Yellow): 2x fire rate for 5 seconds
+- Shield (Cyan): Blocks next hit
+
+--- SCORING ---
+- Chaser kill: 10 points
+- Shooter kill: 20 points
+- Tank kill: 30 points
+- Speeder kill: 15 points
+- Wave completion bonus: wave_number * 50
+
+--- SCREENS ---
+1. Title Screen: Game title, "Press ENTER to Start", High Score display
+2. Gameplay Screen: Main game with HUD
+3. Game Over Screen: Final score, "Press ENTER to Restart"
+4. Pause Screen: "PAUSED" overlay, "Press ESC to Resume"
+
+--- HUD ---
+- Top-left: HP bar
+- Top-right: Score
+- Top-center: Wave number
+- Bottom-center: Active power-up indicators
+
+--- ARENA ---
+- Fixed size: 800x600 (window size)
+- Dark background with subtle grid pattern
+- Borders are walls (player and enemies confined)
+
+================================================================================
+[TECHNICAL PLAN]
+================================================================================
+
+File Structure:
+  Project/
+    main.lua          -- Entry point, game loop, state management
+    player.lua        -- Player module
+    enemy.lua         -- Enemy module (factory pattern)
+    bullet.lua        -- Bullet/projectile module
+    powerup.lua       -- Power-up module
+    wave.lua          -- Wave management
+    ui.lua            -- HUD and menu rendering
+    particles.lua     -- Particle effects
+    utils.lua         -- Utility functions (collision, math)
+    conf.lua          -- Love2D configuration
+
+================================================================================
+[PROGRESS LOG]
+================================================================================
+
+[2026-04-04] Project started
+  - [x] Created game plan document
+  - [x] Setup project structure (conf.lua, utils.lua, main.lua, etc.)
+  - [x] Implement conf.lua (800x600 window, title "Void Survivor")
+  - [x] Implement utils.lua (distance, collision, normalize, edge spawn)
+  - [x] Implement player.lua (WASD movement, mouse aim, shooting, power-ups)
+  - [x] Implement bullet.lua (player & enemy bullets, glow effects)
+  - [x] Implement enemy.lua (4 types: chaser, shooter, tank, speeder)
+  - [x] Implement wave.lua (wave progression, enemy spawning, break timer)
+  - [x] Implement powerup.lua (health, speed, rapid fire, shield)
+  - [x] Implement ui.lua (HUD, title screen, game over, pause)
+  - [x] Implement game states (menu, play, pause, gameover) in main.lua
+  - [x] Implement particles.lua (explosion effects, hit sparks)
+  - [x] First test run - game launches successfully, no errors
+  - [ ] Final review & polish
+
+================================================================================

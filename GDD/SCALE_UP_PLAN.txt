@@ -1,0 +1,193 @@
+================================================================================
+              VOID SURVIVOR - SCALE UP PLAN v2.0
+              Controller Architecture + New Features
+================================================================================
+
+[ARCHITECTURE OVERVIEW]
+================================================================================
+
+  main.lua  (entry point - only around 10 lines)
+    └── GameController            (MASTER - manages the entire game)
+          ├── StateController     (state machine: menu/play/pause/gameover)
+          ├── InputController     (input abstraction layer)
+          ├── SaveController      (load/save data)
+          ├── AudioController     (procedurally generated 8-bit audio)
+          ├── EntityController    (entity lifecycle management)
+          │     ├── Player
+          │     ├── Bullet[]
+          │     ├── PowerUp[]
+          │     └── Enemy[] (through WaveController)
+          ├── WaveController      (wave + boss wave management)
+          │     └── SpawnController  (spawns enemies based on difficulty)
+          ├── CollisionController (all collision handling)
+          ├── ScoreController     (score + combo multiplier)
+          └── RenderController    (render orchestration)
+                ├── BackgroundRenderer (parallax background)
+                └── UIRenderer         (HUD + menu + overlay)
+
+  Communication between controllers: EventBus (pub/sub, loosely coupled)
+
+================================================================================
+[DIRECTORY STRUCTURE]
+================================================================================
+
+Project/
+  main.lua                              -- Entry point (thin wrapper)
+  conf.lua                              -- Love2D config (kept as-is)
+
+  utils/
+    Constants.lua                       -- All game constants
+    Utils.lua                           -- Math / geometry helpers
+
+  systems/
+    EventBus.lua                        -- Pub/Sub event system
+    Particles.lua                       -- Particle system (moved from root)
+
+  entities/
+    Player.lua                          -- Player entity
+    Bullet.lua                          -- Bullet entity
+    PowerUp.lua                         -- Power-up entity
+    enemies/
+      BaseEnemy.lua                     -- Base enemy class
+      ChaserEnemy.lua                   -- Chaser (red)
+      ShooterEnemy.lua                  -- Shooter (purple)
+      TankEnemy.lua                     -- Tank (orange)
+      SpeederEnemy.lua                  -- Speeder (yellow)
+      BossEnemy.lua                     -- [NEW] 2-phase boss
+
+  controllers/
+    GameController.lua                  -- Master controller
+    StateController.lua                 -- State machine
+    input/
+      InputController.lua               -- Input layer
+    audio/
+      AudioController.lua               -- Procedural audio
+    data/
+      SaveController.lua                -- Save/load + settings
+    gameplay/
+      EntityController.lua              -- Entity management
+      CollisionController.lua           -- Collision handling
+      WaveController.lua                -- Wave progression + boss waves
+      SpawnController.lua               -- Enemy spawning
+      ScoreController.lua               -- Score + combo system
+    rendering/
+      RenderController.lua              -- Render orchestration
+      BackgroundRenderer.lua            -- Background (grid + parallax)
+      UIRenderer.lua                    -- HUD + menu + overlay
+
+================================================================================
+[NEW FEATURES v2.0]
+================================================================================
+
+1. BOSS ENEMY (every 5 waves)
+   - Large size with a red-to-yellow gradient color
+   - Phase 1 (100-50% HP): Fires 5 fan-shaped bullets + orbits around the player
+   - Phase 2 (<50% HP): Charges directly + fires twice as fast
+   - Guaranteed to drop 2 power-ups on death + 500 bonus score
+   - The wave pauses enemy spawning until the boss is defeated
+
+2. COMBO SYSTEM
+   - Consecutive kills within 2 seconds increase the combo
+   - Combo tiers: x1 → x2 → x4 → x8 (maximum)
+   - Score = base_score × combo_multiplier
+   - Large combo counter displayed on the HUD
+   - "COMBO BREAK!" text appears when the combo is lost
+
+3. DIFFICULTY SETTINGS (selected on the title screen)
+   - EASY:   75% enemy speed, 75% HP, 75% enemy damage
+   - NORMAL: Default
+   - HARD:   130% speed, 150% HP, 130% damage + more enemies
+
+4. 8-BIT AUDIO (generated automatically, no external files needed)
+   - Shoot: short 880Hz square wave tone
+   - Hit enemy: 440Hz noise burst
+   - Explosion: downward sweep from 200→50Hz
+   - Power-up: 3-note upward arpeggio
+   - Level up: cheerful 5-note jingle
+
+5. WEAPON POWER-UPS (NEW)
+   - Spread: 3 bullets in a 15-degree fan
+   - Heavy: Slower but larger bullet, AOE explosion, pierces once
+   - Lasts 10 seconds and shows a timer on the HUD
+
+6. PARALLAX BACKGROUND
+   - Layer 1: Basic grid (same as before)
+   - Layer 2: Slowly moving stars
+   - Layer 3: Faster moving stars
+   - Depth effect to create a stronger sense of motion
+
+7. SETTINGS & PERSISTENCE
+   - Saves: highscore, difficulty, sfx_volume
+   - Automatically saves when the game ends
+   - Loads on startup
+
+================================================================================
+[EVENTS (EventBus)]
+================================================================================
+
+  "player:shoot"           (x, y, weaponType)
+  "player:damaged"         (amount, newHp)
+  "player:died"
+  "player:powerup"         (type)
+  "enemy:killed"           (enemy)
+  "boss:spawned"           (boss)
+  "boss:phase_change"      (boss, phase)
+  "boss:killed"            (boss)
+  "wave:start"             (waveNumber, isBossWave)
+  "wave:complete"          (waveNumber, bonus)
+  "score:update"           (score, combo)
+  "combo:update"           (comboMultiplier)
+  "combo:break"
+  "state:change"           (oldState, newState)
+  "difficulty:change"      (difficulty)
+  "game:start"
+  "game:over"
+
+================================================================================
+[IMPLEMENTATION PHASES]
+================================================================================
+
+PHASE 1: Foundation + Entities
+  [x] utils/Constants.lua
+  [x] utils/Utils.lua
+  [x] systems/EventBus.lua
+  [x] systems/Particles.lua
+  [x] entities/Bullet.lua
+  [x] entities/PowerUp.lua (+ weapon types)
+  [x] entities/enemies/BaseEnemy.lua
+  [x] entities/enemies/ChaserEnemy.lua
+  [x] entities/enemies/ShooterEnemy.lua
+  [x] entities/enemies/TankEnemy.lua
+  [x] entities/enemies/SpeederEnemy.lua
+  [x] entities/enemies/BossEnemy.lua [NEW]
+  [x] entities/Player.lua (+ weapon system)
+
+PHASE 2: Controllers
+  [x] controllers/input/InputController.lua
+  [x] controllers/audio/AudioController.lua
+  [x] controllers/data/SaveController.lua
+  [x] controllers/gameplay/SpawnController.lua
+  [x] controllers/gameplay/CollisionController.lua
+  [x] controllers/gameplay/WaveController.lua
+  [x] controllers/gameplay/ScoreController.lua
+  [x] controllers/gameplay/EntityController.lua
+  [x] controllers/rendering/BackgroundRenderer.lua
+  [x] controllers/rendering/UIRenderer.lua
+  [x] controllers/rendering/RenderController.lua
+  [x] controllers/StateController.lua
+  [x] controllers/GameController.lua
+
+PHASE 3: Integration & Test
+  [x] main.lua (refactored into a thin wrapper)
+  [x] Full run test completed
+  [x] Update GAME_PLAN.txt
+
+================================================================================
+[PROGRESS LOG]
+================================================================================
+
+[x] Phase 1 - Foundation + Entities        -- DONE
+[x] Phase 2 - Controllers                  -- DONE
+[x] Phase 3 - Integration & Test           -- DONE - Game runs correctly with no errors
+
+================================================================================
