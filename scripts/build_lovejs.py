@@ -215,6 +215,37 @@ def find_file_packager() -> Path:
 
 
 
+def patch_generated_game_js() -> None:
+    game_js_path = DIST_DIR / "game.js"
+    if not game_js_path.exists():
+        raise FileNotFoundError(f"Missing generated loader: {game_js_path}")
+
+    content = game_js_path.read_text(encoding="utf-8")
+    original = content
+
+    replacements = {
+        "Module['preRun'].push(runWithFS); // FS is not initialized yet, wait for it": (
+            "Module['preRun'].push(function() { return runWithFS(window.Module || globalThis.Module || Module); }); "
+            "// FS is not initialized yet, wait for it"
+        ),
+        'Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it': (
+            'Module["preRun"].push(function() { return runWithFS(window.Module || globalThis.Module || Module); }); '
+            '// FS is not initialized yet, wait for it'
+        ),
+        "async function runWithFS(Module) {": (
+            "async function runWithFS(Module) {\n"
+            "      Module = Module || window.Module || globalThis.Module || {};"
+        ),
+    }
+
+    for old, new in replacements.items():
+        content = content.replace(old, new)
+
+    if content != original:
+        game_js_path.write_text(content, encoding="utf-8")
+
+
+
 def build_game_data() -> None:
     file_packager = find_file_packager()
     command = [
@@ -226,6 +257,7 @@ def build_game_data() -> None:
         f"--js-output={DIST_DIR / 'game.js'}",
     ]
     subprocess.run(command, check=True, cwd=ROOT)
+    patch_generated_game_js()
 
 
 
