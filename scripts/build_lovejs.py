@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import html
+import json
 import os
 import re
 import shutil
-import subprocess
 import sys
 import urllib.request
 from pathlib import Path
@@ -187,77 +187,120 @@ def download_file(url: str, destination: Path) -> None:
 
 
 
-def find_file_packager() -> Path:
-    candidates: list[Path] = []
-
-    emsdk = os.environ.get("EMSDK")
-    if emsdk:
-        candidates.append(Path(emsdk) / "upstream" / "emscripten" / "tools" / "file_packager.py")
-
-    emscripten = os.environ.get("EMSCRIPTEN")
-    if emscripten:
-        em_path = Path(emscripten)
-        candidates.extend(
-            [
-                em_path / "tools" / "file_packager.py",
-                em_path / "file_packager.py",
-            ]
-        )
-
-    for candidate in candidates:
-        if candidate.exists():
-            return candidate
-
-    raise FileNotFoundError(
-        "Could not find Emscripten's file_packager.py. "
-        "Install EMSDK and ensure the EMSDK or EMSCRIPTEN environment variable is available."
-    )
-
-
-
-def patch_generated_game_js() -> None:
-    game_js_path = DIST_DIR / "game.js"
-    if not game_js_path.exists():
-        raise FileNotFoundError(f"Missing generated loader: {game_js_path}")
-
-    content = game_js_path.read_text(encoding="utf-8")
-    original = content
-
-    replacements = {
-        "Module['preRun'].push(runWithFS); // FS is not initialized yet, wait for it": (
-            "Module['preRun'].push(function() { return runWithFS(window.Module || globalThis.Module || Module); }); "
-            "// FS is not initialized yet, wait for it"
-        ),
-        'Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it': (
-            'Module["preRun"].push(function() { return runWithFS(window.Module || globalThis.Module || Module); }); '
-            '// FS is not initialized yet, wait for it'
-        ),
-        "async function runWithFS(Module) {": (
-            "async function runWithFS(Module) {\n"
-            "      Module = Module || window.Module || globalThis.Module || {};"
-        ),
-    }
-
-    for old, new in replacements.items():
-        content = content.replace(old, new)
-
-    if content != original:
-        game_js_path.write_text(content, encoding="utf-8")
-
-
-
 def build_game_data() -> None:
-    file_packager = find_file_packager()
-    command = [
-        sys.executable,
-        str(file_packager),
-        str(DIST_DIR / "game.data"),
-        "--preload",
-        f"{PROJECT_DIR}@/",
-        f"--js-output={DIST_DIR / 'game.js'}",
-    ]
-    subprocess.run(command, check=True, cwd=ROOT)
-    patch_generated_game_js()
+    """Pack Project/ into game.data + game.js compatible with old Love.js runtime."""
+    data_path = DIST_DIR / "game.data"
+    js_path = DIST_DIR / "game.js"
+
+    # Collect all files under Project/
+    files_meta: list[dict] = []
+    offset = 0
+
+    with open(data_path, "wb") as data_file:
+        for root, _dirs, filenames in sorted(os.walk(PROJECT_DIR)):
+            for fname in sorted(filenames):
+                src = Path(root) / fname
+                rel = src.relative_to(PROJECT_DIR).as_posix()
+                content = src.read_bytes()
+                data_file.write(content)
+                files_meta.append({
+                    "filename": "/" + rel,
+                    "start": offset,
+                    "end": offset + len(content),
+                })
+                offset += len(content)
+
+    # Collect unique directory paths to create
+    dirs_to_create: list[tuple[str, str]] = []
+    seen_dirs: set[str] = set()
+    for fm in files_meta:
+        parts = fm["filename"].lstrip("/").split("/")
+        for i in range(len(parts) - 1):
+            parent = "/" + "/".join(parts[:i]) if i > 0 else "/"
+            child = parts[i]
+            key = parent + "/" + child
+            if key not in seen_dirs:
+                seen_dirs.add(key)
+                dirs_to_create.append((parent, child))
+
+    # Build game.js — old Love.js compatible (no async, no Module parameter)
+    js_lines = []
+    js_lines.append("var Module = typeof Module !== 'undefined' ? Module : {};")
+    js_lines.append("if (!Module['expectedDataFileDownloads']) Module['expectedDataFileDownloads'] = 0;")
+    js_lines.append("Module['expectedDataFileDownloads']++;")
+    js_lines.append("(function() {")
+    js_lines.append("  var PACKAGE_NAME = 'game.data';")
+    js_lines.append("  var REMOTE_PACKAGE_NAME = 'game.data';")
+    js_lines.append("  var PACKAGE_PATH = '';")
+    js_lines.append("  if (typeof window === 'object') {")
+    js_lines.append("    PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/');")
+    js_lines.append("  }")
+    js_lines.append("  var REMOTE_PACKAGE_BASE = 'game.data';")
+    js_lines.append("  var REMOTE_PACKAGE_NAME = Module['locateFile'] ? Module['locateFile'](REMOTE_PACKAGE_BASE, '') : REMOTE_PACKAGE_BASE;")
+    js_lines.append(f"  var REMOTE_PACKAGE_SIZE = {offset};")
+    js_lines.append(f"  var metadata = {json.dumps({'files': files_meta})};")
+    js_lines.append("")
+    js_lines.append("  function fetchRemotePackage(packageName, packageSize, callback, errback) {")
+    js_lines.append("    var xhr = new XMLHttpRequest();")
+    js_lines.append("    xhr.open('GET', packageName, true);")
+    js_lines.append("    xhr.responseType = 'arraybuffer';")
+    js_lines.append("    xhr.onprogress = function(event) {")
+    js_lines.append("      var url = packageName;")
+    js_lines.append("      var size = packageSize;")
+    js_lines.append("      if (event.total) size = event.total;")
+    js_lines.append("      if (event.loaded) {")
+    js_lines.append("        if (!Module['dataFileDownloads']) Module['dataFileDownloads'] = {};")
+    js_lines.append("        Module['dataFileDownloads'][url] = { loaded: event.loaded, total: size };")
+    js_lines.append("        var total = 0, loaded = 0, num = 0;")
+    js_lines.append("        for (var d in Module['dataFileDownloads']) {")
+    js_lines.append("          var data = Module['dataFileDownloads'][d];")
+    js_lines.append("          total += data.total; loaded += data.loaded; num++;")
+    js_lines.append("        }")
+    js_lines.append("        if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');")
+    js_lines.append("      }")
+    js_lines.append("    };")
+    js_lines.append("    xhr.onerror = function(event) { if (errback) errback(); else throw new Error('NetworkError for: ' + packageName); };")
+    js_lines.append("    xhr.onload = function(event) {")
+    js_lines.append("      if (xhr.status == 200 || xhr.status == 304 || xhr.status == 206 || (xhr.status == 0 && xhr.response)) {")
+    js_lines.append("        callback(xhr.response);")
+    js_lines.append("      } else {")
+    js_lines.append("        throw new Error(xhr.statusText + ' : ' + xhr.responseURL);")
+    js_lines.append("      }")
+    js_lines.append("    };")
+    js_lines.append("    xhr.send(null);")
+    js_lines.append("  }")
+    js_lines.append("")
+    js_lines.append("  function processPackageData(arrayBuffer) {")
+    js_lines.append("    Module['finishedDataFileDownloads']++;")
+    js_lines.append("    var byteArray = new Uint8Array(arrayBuffer);")
+    js_lines.append("    var files = metadata['files'];")
+    js_lines.append("    for (var i = 0; i < files.length; ++i) {")
+    js_lines.append("      var name = files[i]['filename'];")
+    js_lines.append("      var data = byteArray.subarray(files[i]['start'], files[i]['end']);")
+    js_lines.append("      Module['FS_createDataFile'](name, null, data, true, true, true);")
+    js_lines.append("    }")
+    js_lines.append("    Module['removeRunDependency']('datafile_game.data');")
+    js_lines.append("  }")
+    js_lines.append("")
+    js_lines.append("  function loadPackage() {")
+    # Create directories
+    for parent, child in dirs_to_create:
+        js_lines.append(f"    Module['FS_createPath']({json.dumps(parent)}, {json.dumps(child)}, true, true);")
+    js_lines.append("    Module['addRunDependency']('datafile_game.data');")
+    js_lines.append("    if (!Module['preloadResults']) Module['preloadResults'] = {};")
+    js_lines.append("    Module['preloadResults'][PACKAGE_NAME] = { fromCache: false };")
+    js_lines.append("    fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, processPackageData);")
+    js_lines.append("  }")
+    js_lines.append("")
+    js_lines.append("  if (Module['calledRun']) {")
+    js_lines.append("    loadPackage();")
+    js_lines.append("  } else {")
+    js_lines.append("    if (!Module['preRun']) Module['preRun'] = [];")
+    js_lines.append("    Module['preRun'].push(loadPackage);")
+    js_lines.append("  }")
+    js_lines.append("})();")
+
+    js_path.write_text("\n".join(js_lines) + "\n", encoding="utf-8")
 
 
 
