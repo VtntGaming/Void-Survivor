@@ -51,6 +51,9 @@ function GameController.new()
     self.screenFlash = 0
     self.screenFlashColor = {1, 1, 1}
 
+    -- Settings return state
+    self.settingsReturnState = STATES.MENU
+
     -- Kill tracker
     self.killCounts = {chaser = 0, shooter = 0, tank = 0, speeder = 0, boss = 0}
 
@@ -105,6 +108,7 @@ function GameController:startGame()
     Particles.clear()
 
     self.state:change(STATES.PLAYING)
+    self.render:startZoomIntro()
 end
 
 function GameController:update(dt)
@@ -120,6 +124,9 @@ function GameController:update(dt)
         -- Entity updates
         local p = self.entity.player
         self.entity:update(dt, p.x, p.y)
+
+        -- Feed player position to spawn controller for safe radius
+        self.spawn:setPlayerPos(p.x, p.y)
 
         -- Wave update
         self.wave:update(dt, self.entity.enemies)
@@ -158,6 +165,9 @@ function GameController:draw()
 
     if currentState == STATES.MENU then
         self.render:drawTitle(self.save:getHighScore(), C.DIFFICULTY_LIST[self.selectedDiffIdx])
+
+    elseif currentState == STATES.SETTINGS then
+        self.render:drawSettings(self.save:getSfxVolume(), self.save:getScreenShake())
 
     elseif currentState == STATES.PLAYING or currentState == STATES.PAUSED or currentState == STATES.GAMEOVER then
         self.render:drawGame(
@@ -203,6 +213,8 @@ function GameController:keypressed(key)
             self.state:change(STATES.PAUSED)
         elseif currentState == STATES.PAUSED then
             self.state:change(STATES.PLAYING)
+        elseif currentState == STATES.SETTINGS then
+            self.state:change(self.settingsReturnState)
         elseif currentState == STATES.MENU then
             love.event.quit()
         end
@@ -217,10 +229,18 @@ function GameController:keypressed(key)
     elseif key == "left" or key == "a" then
         if currentState == STATES.MENU then
             self.selectedDiffIdx = math.max(1, self.selectedDiffIdx - 1)
+        elseif currentState == STATES.SETTINGS then
+            self:adjustVolume(-0.1)
         end
     elseif key == "right" or key == "d" then
         if currentState == STATES.MENU then
             self.selectedDiffIdx = math.min(#C.DIFFICULTY_LIST, self.selectedDiffIdx + 1)
+        elseif currentState == STATES.SETTINGS then
+            self:adjustVolume(0.1)
+        end
+    elseif key == "up" or key == "down" then
+        if currentState == STATES.SETTINGS then
+            self:cycleScreenShake(key == "up" and -1 or 1)
         end
     elseif key == "f11" then
         love.window.setFullscreen(not love.window.getFullscreen())
@@ -230,6 +250,79 @@ end
 function GameController:triggerFlash(color, duration)
     self.screenFlash = duration or C.SCREEN_FLASH_DURATION
     self.screenFlashColor = color or {1, 1, 1}
+end
+
+function GameController:mousepressed(x, y, button)
+    if button ~= 1 then return end
+    local currentState = self.state:get()
+    local clicked = self.uiRenderer:getClickedButton(x, y)
+    if not clicked then return end
+
+    if currentState == STATES.MENU then
+        if clicked == "start" then
+            self:startGame()
+        elseif clicked == "settings" then
+            self:openSettings(STATES.MENU)
+        elseif clicked:sub(1, 5) == "diff_" then
+            local idx = tonumber(clicked:sub(6))
+            if idx and idx >= 1 and idx <= #C.DIFFICULTY_LIST then
+                self.selectedDiffIdx = idx
+            end
+        end
+    elseif currentState == STATES.PAUSED then
+        if clicked == "resume" then
+            self.state:change(STATES.PLAYING)
+        elseif clicked == "restart" then
+            self:startGame()
+        elseif clicked == "quit" then
+            self:goToMenu()
+        elseif clicked == "settings" then
+            self:openSettings(STATES.PAUSED)
+        end
+    elseif currentState == STATES.GAMEOVER then
+        if clicked == "restart" then
+            self:startGame()
+        elseif clicked == "quit" then
+            self:goToMenu()
+        end
+    elseif currentState == STATES.SETTINGS then
+        if clicked == "back" then
+            self.state:change(self.settingsReturnState)
+        elseif clicked == "vol_down" then
+            self:adjustVolume(-0.1)
+        elseif clicked == "vol_up" then
+            self:adjustVolume(0.1)
+        elseif clicked:sub(1, 6) == "shake_" then
+            local val = clicked:sub(7)
+            self.save:setScreenShake(val)
+        end
+    end
+end
+
+function GameController:openSettings(returnState)
+    self.settingsReturnState = returnState
+    self.state:change(STATES.SETTINGS)
+end
+
+function GameController:cycleScreenShake(dir)
+    local options = C.SCREEN_SHAKE_OPTIONS
+    local current = self.save:getScreenShake()
+    local idx = 1
+    for i, opt in ipairs(options) do
+        if opt == current then idx = i break end
+    end
+    idx = idx + dir
+    if idx < 1 then idx = #options end
+    if idx > #options then idx = 1 end
+    self.save:setScreenShake(options[idx])
+end
+
+function GameController:adjustVolume(delta)
+    local vol = self.save:getSfxVolume()
+    vol = math.max(0, math.min(1, vol + delta))
+    vol = math.floor(vol * 10 + 0.5) / 10  -- round to 0.1
+    self.save:setSfxVolume(vol)
+    self.audio:setVolume(vol)
 end
 
 function GameController:diffNameToIndex(name)

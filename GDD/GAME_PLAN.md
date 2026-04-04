@@ -40,7 +40,7 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 - Wave 4-6: Chasers + Shooters
 - Wave 7-9: Chasers + Shooters + Tanks
 - Wave 10+: All types, increasing quantity
-- 5 second break between waves
+- ~3.5 second break between waves (1.5s before Wave 1 to get into combat faster)
 - Enemy count = base_count + (wave * 2)
 
 --- POWER-UPS ---
@@ -48,6 +48,7 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 - Speed Boost (Blue): +50% speed for 5 seconds
 - Rapid Fire (Yellow): 2x fire rate for 5 seconds
 - Shield (Cyan): Blocks next hit
+- Current drop tuning favors survival-support pickups slightly more often than weapon upgrades for steadier runs
 
 --- SCORING ---
 - Chaser kill: 10 points
@@ -57,10 +58,10 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 - Wave completion bonus: wave_number * 50
 
 --- SCREENS ---
-1. Title Screen: Game title, difficulty selection, high score display, quick controls hint
+1. Title Screen: Game title, difficulty selection, high score display, quick controls hint, and a short gameplay tips panel for onboarding
 2. Gameplay Screen: Main combat view with HUD, active power-up readouts, and a brief round-start zoom-out intro to establish the arena before full combat intensity begins
 3. Pause Screen: "PAUSED" overlay with resume / restart / quit-to-menu actions
-4. Settings Screen: target menu for audio, screen shake, auto-fire, and future remap options
+4. Settings Screen: live SFX volume control plus a screen shake intensity toggle (`off` / `low` / `full`), with room for future auto-fire and remap options
 5. Game Over Screen: final score, kill breakdown, restart and return-to-menu flow
 
 --- HUD ---
@@ -167,5 +168,14 @@ Documentation note:
   - [x] Added F11 fullscreen toggle, screen flash effects and kill breakdown stats
   - [x] Added entity safety limits for bullets, particles and power-ups
   - [x] Final review & polish complete; see `CHANGELOG.md` for the detailed history.
+
+[2026-04-05] P0 polish sprint completed
+  - [x] Added enemy spawn fade-in, grace period, and safe-radius spawn protection
+  - [x] Added HP chip-damage feedback and full mouse-hover/click menu support
+  - [x] Rebalanced enemy stats and weighted power-up drop rates
+  - [x] Added boss phase-2 warning telegraph and title-screen gameplay tips panel
+  - [x] Added Settings screen controls for SFX volume and screen shake intensity
+  - [x] Added round-start zoom-out intro and tuned wave-break / combo pacing
+  - [x] Repeated local test runs completed successfully with exit code 0
 
 ================================================================================

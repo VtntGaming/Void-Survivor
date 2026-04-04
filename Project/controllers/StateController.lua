@@ -5,7 +5,8 @@ local STATES = {
     MENU = "menu",
     PLAYING = "playing",
     PAUSED = "paused",
-    GAMEOVER = "gameover"
+    GAMEOVER = "gameover",
+    SETTINGS = "settings"
 }
 
 StateController.STATES = STATES

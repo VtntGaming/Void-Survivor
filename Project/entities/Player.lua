@@ -36,6 +36,10 @@ function Player.new()
     self.baseFireRate = C.PLAYER_FIRE_RATE
     self.fireTimer = 0
 
+    -- Damage chip display
+    self.displayHp = C.PLAYER_HP  -- trailing HP for red bar effect
+    self.chipDecayRate = 30       -- HP units per second the chip bar drains
+
     -- Input state (set by InputController)
     self.moveX = 0
     self.moveY = 0
@@ -108,6 +112,14 @@ function Player:update(dt, bullets)
         self.weaponTimer = self.weaponTimer - dt
         if self.weaponTimer <= 0 then
             self.weaponType = "normal"
+        end
+    end
+
+    -- Chip HP decay (trailing red bar)
+    if self.displayHp > self.hp then
+        self.displayHp = self.displayHp - self.chipDecayRate * dt
+        if self.displayHp < self.hp then
+            self.displayHp = self.hp
         end
     end
 end

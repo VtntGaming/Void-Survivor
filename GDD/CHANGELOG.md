@@ -3,22 +3,33 @@
 ================================================================================
 Project: Void Survivor
 Engine : Love2D 11.5
-Scope  : Consolidated development history after local polish cycles
+Scope  : Consolidated development history after the local polish sprint
 Status : Playable prototype with controller architecture, boss waves, combo,
-         persistence, procedural audio and post-integration polish complete
+         persistence, and a completed P0 QoL / balance pass ready for the next milestone
 ================================================================================
 
-[2026-04-05] - Combat fairness & UI polish docs sync
+[2026-04-05] - Local polish sprint complete
 --------------------------------------------------------------------------------
-Planned / Documented:
-- Added a round-start camera zoom-out intro note to the gameplay plan
-- Added enemy spawn safety rules: fade-in opacity, short non-damaging grace
-  window, and minimum respawn distance from the player after contact
-- Added HP bar red damage-loss feedback and mouse-clickable GUI requirements to
-  the active roadmap
+Added:
+- Enemy spawn fairness pass: fade-in opacity, short non-damaging grace window,
+  and safe-radius / edge-biased spawning to reduce unfair contact hits
+- HP bar red damage-loss (chip) feedback for clearer combat readability
+- Mouse-clickable title / pause / game-over / settings buttons with hover states
+- Settings screen with SFX volume slider and screen shake intensity toggle
+  (`off` / `low` / `full`)
+- Title-screen gameplay tips panel and a brief round-start zoom-out intro
+
+Improved:
+- Rebalanced enemy HP / speed / damage across difficulties for a fairer early and
+  mid-game curve
+- Reweighted power-up drops toward survival-support outcomes while preserving
+  weapon variety
+- Added boss phase-2 warning / telegraph presentation for stronger readability
+- Tuned wave-break pacing and combo scoring windows for a faster, smoother flow
 
 Verified:
-- GDD files synchronized to reflect the next requested polish pass
+- Repeated local Love2D test runs completed successfully with exit code 0 after
+  each polish cycle
 
 [2026-04-04] - ExtendedGDD documentation sync
 --------------------------------------------------------------------------------
@@ -113,7 +124,7 @@ Verified:
 CURRENT SNAPSHOT
 --------------------------------------------------------------------------------
 The game is now in a strong prototype / vertical-slice state:
-- Core loop is fully playable
-- Architecture is scalable enough for more content
-- Main remaining work is balance, UX polish, progression depth and more content
+- Core loop is fully playable and noticeably fairer / more readable after the P0 polish sprint
+- Architecture is scalable enough for more content and more settings
+- Main remaining work is tutorial prompts, deeper progression, broader accessibility, and more content variety
 ================================================================================

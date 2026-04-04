@@ -19,6 +19,10 @@ function BossEnemy.new(x, y, difficultyMult)
     self.fanSpread = C.ENEMY.boss.fanSpread
     self.pulseTimer = 0
     self.phaseChanged = false
+    -- Phase transition telegraph
+    self.phaseTransitionTimer = 0
+    self.phaseTransitionDuration = 1.5  -- seconds of telegraph before becoming aggressive
+    self.inPhaseTransition = false
     return self
 end
 
@@ -28,12 +32,24 @@ function BossEnemy:update(dt, playerX, playerY, bullets)
 
     self.pulseTimer = self.pulseTimer + dt
 
+    -- Phase transition telegraph
+    if self.inPhaseTransition then
+        self.phaseTransitionTimer = self.phaseTransitionTimer - dt
+        if self.phaseTransitionTimer <= 0 then
+            self.inPhaseTransition = false
+            self.fireRate = self.fireRate * 0.5
+            self.speed = self.speed * 1.5
+        end
+        -- During transition, boss stands still and pulses
+        return
+    end
+
     -- Phase check
     if self.phase == 1 and self.hp <= self.maxHp * 0.5 then
         self.phase = 2
         self.phaseChanged = true
-        self.fireRate = self.fireRate * 0.5 -- shoot twice as fast
-        self.speed = self.speed * 1.5
+        self.inPhaseTransition = true
+        self.phaseTransitionTimer = self.phaseTransitionDuration
     end
 
     if self.phase == 1 then
@@ -110,6 +126,22 @@ function BossEnemy:draw()
     if self.phase == 2 then
         love.graphics.setColor(1, 0, 0, 0.4 + math.sin(self.pulseTimer * 8) * 0.3)
         love.graphics.circle("line", self.x, self.y, self.radius * 1.3 * pulse)
+    end
+
+    -- Phase transition telegraph
+    if self.inPhaseTransition then
+        local progress = 1 - (self.phaseTransitionTimer / self.phaseTransitionDuration)
+        local expandRadius = self.radius * (1.5 + progress * 2)
+        love.graphics.setColor(1, 0.1, 0, 0.6 * (0.5 + math.sin(self.pulseTimer * 12) * 0.5))
+        love.graphics.circle("line", self.x, self.y, expandRadius)
+        love.graphics.circle("line", self.x, self.y, expandRadius * 0.7)
+
+        -- Warning text
+        love.graphics.setColor(1, 0.2, 0, 0.8 + math.sin(self.pulseTimer * 10) * 0.2)
+        local font = love.graphics.getFont()
+        local warnText = "!! ENRAGED !!"
+        local tw = font:getWidth(warnText)
+        love.graphics.print(warnText, self.x - tw / 2, self.y - self.radius - 30)
     end
 
     -- HP bar (wider for boss)

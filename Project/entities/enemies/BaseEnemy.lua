@@ -27,6 +27,11 @@ function BaseEnemy.new(enemyType, x, y, difficultyMult)
     self.fireTimer = def.fireRate or 0
     self.preferredDist = def.preferredDist or 0
 
+    -- Spawn fade-in system
+    self.spawnFadeTimer = C.SPAWN_FADE_IN_DURATION
+    self.spawnGraceTimer = C.SPAWN_GRACE_DURATION
+    self.spawnFadeAlpha = 0
+
     return self
 end
 
@@ -38,6 +43,23 @@ function BaseEnemy:update(dt, playerX, playerY, bullets)
     if self.hitFlash > 0 then
         self.hitFlash = self.hitFlash - dt
     end
+
+    -- Spawn fade-in
+    if self.spawnFadeTimer > 0 then
+        self.spawnFadeTimer = self.spawnFadeTimer - dt
+        self.spawnFadeAlpha = 1 - (self.spawnFadeTimer / C.SPAWN_FADE_IN_DURATION)
+    else
+        self.spawnFadeAlpha = 1
+    end
+
+    -- Grace timer
+    if self.spawnGraceTimer > 0 then
+        self.spawnGraceTimer = self.spawnGraceTimer - dt
+    end
+end
+
+function BaseEnemy:canDealContactDamage()
+    return self.spawnGraceTimer <= 0
 end
 
 function BaseEnemy:takeDamage(amount)
@@ -66,9 +88,9 @@ end
 
 function BaseEnemy:setColor()
     if self.hitFlash > 0 then
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(1, 1, 1, self.spawnFadeAlpha)
     else
-        love.graphics.setColor(self.color[1], self.color[2], self.color[3])
+        love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.spawnFadeAlpha)
     end
 end
 

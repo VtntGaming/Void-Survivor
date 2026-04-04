@@ -21,6 +21,8 @@ function SpawnController.new(eventBus)
     local self = setmetatable({}, SpawnController)
     self.eventBus = eventBus
     self.difficultyMult = C.DIFFICULTY.normal
+    self.playerX = C.PLAYER_START_X
+    self.playerY = C.PLAYER_START_Y
     return self
 end
 
@@ -28,17 +30,38 @@ function SpawnController:setDifficulty(diffName)
     self.difficultyMult = C.DIFFICULTY[diffName] or C.DIFFICULTY.normal
 end
 
+function SpawnController:setPlayerPos(x, y)
+    self.playerX = x
+    self.playerY = y
+end
+
+function SpawnController:safeEdgePosition(margin)
+    local maxAttempts = 10
+    for _ = 1, maxAttempts do
+        local x, y = Utils.randomEdgePosition(margin)
+        local dist = Utils.distance(x, y, self.playerX, self.playerY)
+        if dist >= C.SPAWN_SAFE_RADIUS then
+            return x, y
+        end
+    end
+    return Utils.randomEdgePosition(margin)
+end
+
 function SpawnController:spawnEnemy(wave)
     local types = BaseEnemy.getTypesForWave(wave)
     local enemyType = types[math.random(#types)]
-    local x, y = Utils.randomEdgePosition(30)
+    local x, y = self:safeEdgePosition(30)
     local constructor = ENEMY_CONSTRUCTORS[enemyType]
     return constructor(x, y, self.difficultyMult)
 end
 
 function SpawnController:spawnBoss()
-    local x, y = Utils.randomEdgePosition(50)
+    local x, y = self:safeEdgePosition(50)
     local boss = BossEnemy.new(x, y, self.difficultyMult)
+    -- Boss skips fade-in for dramatic effect
+    boss.spawnFadeTimer = 0
+    boss.spawnFadeAlpha = 1
+    boss.spawnGraceTimer = 0
     self.eventBus:emit("boss:spawned", boss)
     return boss
 end

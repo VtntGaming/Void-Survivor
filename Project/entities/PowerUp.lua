@@ -12,13 +12,37 @@ local TYPES = {
     heavy  = {color = {1, 0.3, 0.6}, symbol = "H"},
 }
 
-local TYPE_LIST = {"health", "speed", "rapid", "shield", "spread", "heavy"}
+-- Weighted drop table: support types drop more often
+local DROP_TABLE = {
+    {type = "health", weight = 30},
+    {type = "speed",  weight = 15},
+    {type = "rapid",  weight = 15},
+    {type = "shield", weight = 20},
+    {type = "spread", weight = 10},
+    {type = "heavy",  weight = 10},
+}
+
+local function weightedRandomType()
+    local totalWeight = 0
+    for _, entry in ipairs(DROP_TABLE) do
+        totalWeight = totalWeight + entry.weight
+    end
+    local roll = math.random() * totalWeight
+    local cumulative = 0
+    for _, entry in ipairs(DROP_TABLE) do
+        cumulative = cumulative + entry.weight
+        if roll <= cumulative then
+            return entry.type
+        end
+    end
+    return DROP_TABLE[#DROP_TABLE].type
+end
 
 function PowerUp.new(x, y, puType)
     local self = setmetatable({}, PowerUp)
     self.x = x
     self.y = y
-    self.type = puType or TYPE_LIST[math.random(#TYPE_LIST)]
+    self.type = puType or weightedRandomType()
     self.radius = C.POWERUP_RADIUS
     self.alive = true
     self.lifetime = C.POWERUP_LIFETIME

@@ -1,9 +1,9 @@
 ================================================================================
                VOID SURVIVOR - PRIORITY GAME PLAN / ROADMAP
 ================================================================================
-Date   : 2026-04-04
-Status : Playable vertical-slice prototype
-Goal   : Move from polished prototype -> content-rich, replayable arcade game
+Date   : 2026-04-05
+Status : Playable vertical-slice prototype with major P0 polish pass completed
+Goal   : Move from polished prototype -> demo-ready, content-rich arcade game
 ================================================================================
 
 [CURRENT DEVELOPMENT STATE]
@@ -54,6 +54,12 @@ UX / Menus
 - [DONE] Pause screen with resume / restart / quit-to-menu
 - [DONE] Game over screen with score, best score and kill breakdown
 - [DONE] Fullscreen toggle (`F11`)
+- [DONE] Spawn fade-in, safe-radius spawn protection and grace window for fairer enemy materialization
+- [DONE] HP bar chip-damage feedback and mouse-clickable menu hover states
+- [DONE] Enemy/difficulty rebalance and weighted power-up drop tuning
+- [DONE] Boss phase-2 telegraph warning and title-screen onboarding tips panel
+- [DONE] Settings screen with SFX slider and screen shake intensity toggle
+- [DONE] Round-start zoom-out intro plus wave-break / combo pacing retune
 
 ================================================================================
 [TODO - P0 / NEXT SPRINT]
@@ -64,35 +70,35 @@ UX / Menus
    - The game is playable now, so the highest-value work is tuning what already
      exists instead of adding too much new complexity.
    Tasks:
-   - [TODO] Rebalance enemy HP / speed / damage for each difficulty
+   - [DONE] Rebalance enemy HP / speed / damage for each difficulty
    - [TODO] Tune boss HP and attack cadence so boss fights feel threatening but fair
-   - [TODO] Add a brief round-start zoom-out intro when entering a run
-   - [TODO] Fix the enemy respawn/reposition bug so enemies never reappear right beside the player after contact
-   - [TODO] Add spawn fade-in opacity and a short grace window before newly spawned regular enemies can deal contact damage
-   - [TODO] Adjust drop rates for support vs weapon power-ups
-   - [TODO] Tune combo timer and score values for satisfying risk/reward
-   - [TODO] Review wave break duration and spawn cadence after wave 10+
+   - [DONE] Add a brief round-start zoom-out intro when entering a run
+   - [DONE] Fix the enemy respawn/reposition bug so enemies never reappear right beside the player after contact
+   - [DONE] Add spawn fade-in opacity and a short grace window before newly spawned regular enemies can deal contact damage
+   - [DONE] Adjust drop rates for support vs weapon power-ups
+   - [DONE] Tune combo timer and score values for satisfying risk/reward
+   - [DONE] Review wave break duration and spawn cadence after wave 10+
 
 2. ONBOARDING / CLARITY
    Priority: P0
    Why:
    - New players need clearer guidance to understand systems quickly.
    Tasks:
-   - [TODO] Add a short gameplay tip panel on the title screen
+   - [DONE] Add a short gameplay tip panel on the title screen
    - [TODO] Add first-run tutorial prompts for movement / aim / shoot / pickups
-   - [TODO] Add clearer telegraphing for boss phase 2 and heavy damage threats
+   - [DONE] Add clearer telegraphing for boss phase 2 and heavy damage threats
    - [TODO] Improve readability of active weapon and power-up timers in HUD
-   - [TODO] Add a red damage-loss effect to the HP UI so health drops are easier to read
-   - [TODO] Ensure title / pause / settings GUI can be clicked with the mouse and has hover feedback
+   - [DONE] Add a red damage-loss effect to the HP UI so health drops are easier to read
+   - [DONE] Ensure title / pause / settings GUI can be clicked with the mouse and has hover feedback
 
 3. SETTINGS / ACCESSIBILITY
    Priority: P0
    Why:
    - Strong usability improvements with relatively low engineering cost.
    Tasks:
-   - [TODO] Add adjustable SFX volume UI in menu
+   - [DONE] Add adjustable SFX volume UI in menu
    - [TODO] Add music mute / volume controls alongside SFX settings
-   - [TODO] Add toggle for screenshake intensity or disable option
+   - [DONE] Add toggle for screenshake intensity or disable option
    - [TODO] Add color/accessibility-friendly UI contrast pass
    - [TODO] Consider auto-fire toggle in menu options
    - [TODO] Add input remap plan for keyboard and future gamepad support
@@ -176,7 +182,7 @@ UX / Menus
 ================================================================================
 Milestone Name: "Prototype to Demo"
 Target focus for the next development block:
-- Finish P0 balance + onboarding + settings work first
+- Close the remaining P0 gaps first: tutorial prompts, HUD timer readability, music/settings breadth, and accessibility contrast
 - Then add one P1 enemy and one P1 power-up branch
 - Re-test difficulty curves and boss pacing after every balance change
 - Avoid major architectural changes unless profiling shows a real issue

@@ -49,8 +49,8 @@ function ScoreController:onEnemyKilled(enemy)
     self.combo = self.combo + 1
     self.comboTimer = C.COMBO_WINDOW
 
-    -- Tier up: every 3 kills increases tier
-    local newTier = math.min(math.floor(self.combo / 3) + 1, #C.COMBO_TIERS)
+    -- Tier up: every COMBO_TIER_KILLS kills increases tier
+    local newTier = math.min(math.floor(self.combo / C.COMBO_TIER_KILLS) + 1, #C.COMBO_TIERS)
     if newTier ~= self.comboTier then
         self.comboTier = newTier
         self.comboMultiplier = C.COMBO_TIERS[self.comboTier]

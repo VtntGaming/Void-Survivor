@@ -8,7 +8,8 @@ function SaveController.new()
     self.data = {
         highScore = 0,
         difficulty = "normal",
-        sfxVolume = C.SFX_VOLUME
+        sfxVolume = C.SFX_VOLUME,
+        screenShake = "full"
     }
     self:load()
     return self
@@ -19,6 +20,7 @@ function SaveController:save()
     content = content .. "highScore=" .. tostring(self.data.highScore) .. "\n"
     content = content .. "difficulty=" .. tostring(self.data.difficulty) .. "\n"
     content = content .. "sfxVolume=" .. tostring(self.data.sfxVolume) .. "\n"
+    content = content .. "screenShake=" .. tostring(self.data.screenShake) .. "\n"
     love.filesystem.write("save.dat", content)
 end
 
@@ -37,6 +39,10 @@ function SaveController:load()
                 end
             elseif key == "sfxVolume" then
                 self.data.sfxVolume = tonumber(value) or C.SFX_VOLUME
+            elseif key == "screenShake" then
+                if value == "off" or value == "low" or value == "full" then
+                    self.data.screenShake = value
+                end
             end
         end
     end
@@ -70,6 +76,15 @@ end
 
 function SaveController:setSfxVolume(vol)
     self.data.sfxVolume = vol
+    self:save()
+end
+
+function SaveController:getScreenShake()
+    return self.data.screenShake
+end
+
+function SaveController:setScreenShake(val)
+    self.data.screenShake = val
     self:save()
 end
 

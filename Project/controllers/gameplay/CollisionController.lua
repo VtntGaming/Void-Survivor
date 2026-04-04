@@ -106,7 +106,7 @@ end
 
 function CollisionController:enemyContactVsPlayer(player, enemies)
     for _, e in ipairs(enemies) do
-        if e.alive and Utils.checkCircleCollision(player.x, player.y, player.radius, e.x, e.y, e.radius) then
+        if e.alive and e:canDealContactDamage() and Utils.checkCircleCollision(player.x, player.y, player.radius, e.x, e.y, e.radius) then
             local damaged = player:takeDamage(e.damage)
             if damaged then
                 self.eventBus:emit("player:damaged", e.damage, player.hp)
