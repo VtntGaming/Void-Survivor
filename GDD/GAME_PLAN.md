@@ -127,9 +127,9 @@ Current File Structure:
       Utils.lua                           -- Math helpers
 
 Documentation note:
-  - `GAME_PLAN.txt` keeps the core concept and high-level design.
-  - `CHANGELOG.txt` tracks implementation history.
-  - `PRIORITY_GAME_PLAN.txt` tracks backlog / todo / done for next development steps.
+  - `GAME_PLAN.md` keeps the core concept and high-level design.
+  - `CHANGELOG.md` tracks implementation history.
+  - `PRIORITY_GAME_PLAN.md` tracks backlog / todo / done for next development steps.
 
 ================================================================================
 [PROGRESS LOG]
@@ -158,6 +158,6 @@ Documentation note:
   - [x] Expanded pause/gameover controls (restart / quit to menu)
   - [x] Added F11 fullscreen toggle, screen flash effects and kill breakdown stats
   - [x] Added entity safety limits for bullets, particles and power-ups
-  - [x] Final review & polish complete; see `CHANGELOG.txt` for the detailed history.
+  - [x] Final review & polish complete; see `CHANGELOG.md` for the detailed history.
 
 ================================================================================

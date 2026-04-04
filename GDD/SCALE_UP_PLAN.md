@@ -5,8 +5,8 @@
 
 Status note:
 - This architecture plan is now fully implemented.
-- Detailed implementation history is consolidated in `CHANGELOG.txt`.
-- Active roadmap / backlog is tracked in `PRIORITY_GAME_PLAN.txt`.
+- Detailed implementation history is consolidated in `CHANGELOG.md`.
+- Active roadmap / backlog is tracked in `PRIORITY_GAME_PLAN.md`.
 
 [EXTENDED GDD ALIGNMENT]
 ================================================================================
@@ -192,7 +192,7 @@ PHASE 2: Controllers
 PHASE 3: Integration & Test
   [x] main.lua (refactored into a thin wrapper)
   [x] Full run test completed
-  [x] Update GAME_PLAN.txt
+  [x] Update `GAME_PLAN.md`
 
 ================================================================================
 [PROGRESS LOG]
