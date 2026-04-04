@@ -13,6 +13,7 @@ Status note:
 - Visual direction: dark sci-fi arena, alien wreckage silhouettes, bright hero ship accents, neon blue/orange readability
 - HUD direction: clean futuristic circular motifs as inspiration, but gameplay clarity remains the top priority
 - Input direction: keyboard + mouse first, future-ready for gamepad and remap support
+- Immediate polish targets synced from the live GDD: round-start zoom-out intro, safe enemy fade-in spawn behavior, HP red-loss UI feedback, and fully mouse-clickable menus
 - Long-term architecture note: keep the current controller/OOP structure for now; only revisit ECS if content scale grows significantly
 
 [ARCHITECTURE OVERVIEW]

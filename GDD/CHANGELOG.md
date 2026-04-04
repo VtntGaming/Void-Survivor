@@ -8,6 +8,18 @@ Status : Playable prototype with controller architecture, boss waves, combo,
          persistence, procedural audio and post-integration polish complete
 ================================================================================
 
+[2026-04-05] - Combat fairness & UI polish docs sync
+--------------------------------------------------------------------------------
+Planned / Documented:
+- Added a round-start camera zoom-out intro note to the gameplay plan
+- Added enemy spawn safety rules: fade-in opacity, short non-damaging grace
+  window, and minimum respawn distance from the player after contact
+- Added HP bar red damage-loss feedback and mouse-clickable GUI requirements to
+  the active roadmap
+
+Verified:
+- GDD files synchronized to reflect the next requested polish pass
+
 [2026-04-04] - ExtendedGDD documentation sync
 --------------------------------------------------------------------------------
 Updated:

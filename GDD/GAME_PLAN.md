@@ -58,13 +58,13 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 
 --- SCREENS ---
 1. Title Screen: Game title, difficulty selection, high score display, quick controls hint
-2. Gameplay Screen: Main combat view with HUD and active power-up readouts
+2. Gameplay Screen: Main combat view with HUD, active power-up readouts, and a brief round-start zoom-out intro to establish the arena before full combat intensity begins
 3. Pause Screen: "PAUSED" overlay with resume / restart / quit-to-menu actions
 4. Settings Screen: target menu for audio, screen shake, auto-fire, and future remap options
 5. Game Over Screen: final score, kill breakdown, restart and return-to-menu flow
 
 --- HUD ---
-- Top-left: HP bar
+- Top-left: HP bar with a delayed red damage-loss effect so recent HP loss reads clearly in hectic fights
 - Top-right: Score and Best score
 - Top-center: Wave number and combo feedback
 - Bottom-center: Active power-up indicators and weapon timer
@@ -81,6 +81,14 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 - Current quick actions: ESC pause, Enter restart/start, F11 fullscreen
 - Target support: gamepad input, remappable controls, music/SFX sliders, screen shake toggle
 - UI should keep high contrast, readable text, and color + icon based status indicators
+- Menus / GUI should support mouse hover + click interaction in addition to keyboard shortcuts
+
+--- COMBAT FAIRNESS & UX POLISH TARGETS ---
+- Round-start intro: camera briefly zooms out when entering a run, then settles into the normal gameplay framing
+- Spawn safety: newly spawned standard enemies fade in from transparent to fully visible and cannot immediately damage the player during this materialization window
+- Anti-frustration spawn rule: if an enemy is repositioned after contact/overlap, it must respawn outside a minimum safe radius from the player and preferably toward arena edges
+- Damage readability: HP loss should leave a short red "chip" / trailing bar effect before the main HP bar settles
+- Full mouse UI pass: title / pause / settings actions should be clickable and visually respond to hover/press states
 
 --- ART & AUDIO DIRECTION ---
 - Player ship direction: sleek, fast, heroic silhouette; warm orange/yellow paint is a strong candidate

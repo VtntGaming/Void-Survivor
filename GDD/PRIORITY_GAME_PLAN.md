@@ -66,6 +66,9 @@ UX / Menus
    Tasks:
    - [TODO] Rebalance enemy HP / speed / damage for each difficulty
    - [TODO] Tune boss HP and attack cadence so boss fights feel threatening but fair
+   - [TODO] Add a brief round-start zoom-out intro when entering a run
+   - [TODO] Fix the enemy respawn/reposition bug so enemies never reappear right beside the player after contact
+   - [TODO] Add spawn fade-in opacity and a short grace window before newly spawned regular enemies can deal contact damage
    - [TODO] Adjust drop rates for support vs weapon power-ups
    - [TODO] Tune combo timer and score values for satisfying risk/reward
    - [TODO] Review wave break duration and spawn cadence after wave 10+
@@ -79,6 +82,8 @@ UX / Menus
    - [TODO] Add first-run tutorial prompts for movement / aim / shoot / pickups
    - [TODO] Add clearer telegraphing for boss phase 2 and heavy damage threats
    - [TODO] Improve readability of active weapon and power-up timers in HUD
+   - [TODO] Add a red damage-loss effect to the HP UI so health drops are easier to read
+   - [TODO] Ensure title / pause / settings GUI can be clicked with the mouse and has hover feedback
 
 3. SETTINGS / ACCESSIBILITY
    Priority: P0
