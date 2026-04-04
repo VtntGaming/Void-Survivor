@@ -19,7 +19,7 @@ function CollisionController:update(dt, player, enemies, bullets, powerups)
     self:playerVsPowerUps(player, powerups)
 
     if self.screenShake > 0 then
-        self.screenShake = self.screenShake - dt * 8
+        self.screenShake = self.screenShake - dt * C.SCREEN_SHAKE_DECAY_RATE
         if self.screenShake < 0 then self.screenShake = 0 end
     end
 end
@@ -36,12 +36,18 @@ function CollisionController:playerBulletsVsEnemies(player, enemies, bullets, po
                     local killed = e:takeDamage(b.damage)
                     Particles.spawn(b.x, b.y, e.color, 4, 80, 0.3)
 
+                    -- Check boss phase change
+                    if e.phaseChanged then
+                        e.phaseChanged = false
+                        self.eventBus:emit("boss:phase_change", e, e.phase)
+                    end
+
                     -- AOE for heavy bullets
                     if b.bulletType == "heavy" and b.aoeRadius then
                         for _, other in ipairs(enemies) do
                             if other ~= e and other.alive then
                                 if Utils.checkCircleCollision(b.x, b.y, b.aoeRadius, other.x, other.y, other.radius) then
-                                    local aoeKilled = other:takeDamage(b.damage * 0.5)
+                                    local aoeKilled = other:takeDamage(b.damage * C.AOE_DAMAGE_MULT)
                                     if aoeKilled then
                                         self.eventBus:emit("enemy:killed", other)
                                         Particles.spawn(other.x, other.y, other.color, 8, 120, 0.5)
@@ -57,7 +63,7 @@ function CollisionController:playerBulletsVsEnemies(player, enemies, bullets, po
                     if killed then
                         self.eventBus:emit("enemy:killed", e)
                         Particles.spawn(e.x, e.y, e.color, 12, 150, 0.6)
-                        self.screenShake = math.max(self.screenShake, e.type == "boss" and 6 or 2)
+                        self.screenShake = math.max(self.screenShake, e.type == "boss" and C.SCREEN_SHAKE_BOSS_KILL or C.SCREEN_SHAKE_ENEMY_HIT)
 
                         -- Boss drops guaranteed power-ups
                         if e.type == "boss" then
@@ -92,7 +98,7 @@ function CollisionController:enemyBulletsVsPlayer(player, bullets)
                     self.eventBus:emit("player:damaged", b.damage, player.hp)
                 end
                 Particles.spawn(b.x, b.y, {1, 0.3, 0.3}, 6, 100, 0.4)
-                self.screenShake = math.max(self.screenShake, 3)
+                self.screenShake = math.max(self.screenShake, C.SCREEN_SHAKE_PLAYER_HIT_BULLET)
             end
         end
     end
@@ -105,11 +111,11 @@ function CollisionController:enemyContactVsPlayer(player, enemies)
             if damaged then
                 self.eventBus:emit("player:damaged", e.damage, player.hp)
             end
-            self.screenShake = math.max(self.screenShake, 4)
+            self.screenShake = math.max(self.screenShake, C.SCREEN_SHAKE_PLAYER_HIT_CONTACT)
             Particles.spawn(player.x, player.y, {1, 0.5, 0.2}, 8, 120, 0.4)
             local angle = Utils.angle(player.x, player.y, e.x, e.y)
-            e.x = e.x + math.cos(angle) * 30
-            e.y = e.y + math.sin(angle) * 30
+            e.x = e.x + math.cos(angle) * C.ENEMY_KNOCKBACK_DIST
+            e.y = e.y + math.sin(angle) * C.ENEMY_KNOCKBACK_DIST
         end
     end
 end

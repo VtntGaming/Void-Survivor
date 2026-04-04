@@ -1,4 +1,5 @@
 local Particles = require("systems.Particles")
+local C = require("utils.Constants")
 
 local RenderController = {}
 RenderController.__index = RenderController
@@ -18,8 +19,9 @@ function RenderController:drawGame(entities, waveCtrl, scoreCtrl, saveCtrl, scre
     -- Screen shake
     local sx, sy = 0, 0
     if screenShake > 0 then
-        sx = (math.random() - 0.5) * screenShake * 2
-        sy = (math.random() - 0.5) * screenShake * 2
+        local maxOff = C.SCREEN_SHAKE_MAX_OFFSET
+        sx = math.max(-maxOff, math.min(maxOff, (math.random() - 0.5) * screenShake * 2))
+        sy = math.max(-maxOff, math.min(maxOff, (math.random() - 0.5) * screenShake * 2))
     end
     love.graphics.push()
     love.graphics.translate(sx, sy)
@@ -80,8 +82,8 @@ function RenderController:drawPause()
     self.ui:drawPause()
 end
 
-function RenderController:drawGameOver(score, wave, highScore, isNewHighScore)
-    self.ui:drawGameOver(score, wave, highScore, isNewHighScore)
+function RenderController:drawGameOver(score, wave, highScore, isNewHighScore, killCounts)
+    self.ui:drawGameOver(score, wave, highScore, isNewHighScore, killCounts)
 end
 
 return RenderController

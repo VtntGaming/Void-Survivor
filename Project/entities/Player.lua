@@ -162,10 +162,10 @@ function Player:applyPowerUp(puType)
         self:heal(C.HEAL_AMOUNT)
     elseif puType == "speed" then
         self.speedBoost = true
-        self.speedBoostTimer = 5
+        self.speedBoostTimer = C.SPEED_BOOST_DURATION
     elseif puType == "rapid" then
         self.rapidFire = true
-        self.rapidFireTimer = 5
+        self.rapidFireTimer = C.RAPID_FIRE_DURATION
     elseif puType == "shield" then
         self.shield = true
     elseif puType == "spread" then

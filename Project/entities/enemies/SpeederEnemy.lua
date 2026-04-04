@@ -8,6 +8,9 @@ setmetatable(SpeederEnemy, {__index = BaseEnemy})
 function SpeederEnemy.new(x, y, difficultyMult)
     local self = BaseEnemy.new("speeder", x, y, difficultyMult)
     setmetatable(self, SpeederEnemy)
+    self.weaveTimer = math.random() * math.pi * 2  -- random start phase
+    self.weaveFreq = 5    -- oscillation frequency
+    self.weaveAmplitude = 80  -- perpendicular offset strength
     return self
 end
 
@@ -15,9 +18,14 @@ function SpeederEnemy:update(dt, playerX, playerY, bullets)
     BaseEnemy.update(self, dt, playerX, playerY, bullets)
     if not self.alive then return end
 
+    -- Zigzag movement: chase + sine wave perpendicular
     local dx, dy = Utils.normalize(playerX - self.x, playerY - self.y)
-    self.x = self.x + dx * self.speed * dt
-    self.y = self.y + dy * self.speed * dt
+    self.weaveTimer = self.weaveTimer + dt * self.weaveFreq
+    local weave = math.sin(self.weaveTimer) * self.weaveAmplitude
+    -- Perpendicular direction
+    local px, py = -dy, dx
+    self.x = self.x + (dx * self.speed + px * weave) * dt
+    self.y = self.y + (dy * self.speed + py * weave) * dt
 end
 
 function SpeederEnemy:draw()

@@ -18,6 +18,7 @@ function BossEnemy.new(x, y, difficultyMult)
     self.fanCount = C.ENEMY.boss.fanCount
     self.fanSpread = C.ENEMY.boss.fanSpread
     self.pulseTimer = 0
+    self.phaseChanged = false
     return self
 end
 
@@ -30,6 +31,7 @@ function BossEnemy:update(dt, playerX, playerY, bullets)
     -- Phase check
     if self.phase == 1 and self.hp <= self.maxHp * 0.5 then
         self.phase = 2
+        self.phaseChanged = true
         self.fireRate = self.fireRate * 0.5 -- shoot twice as fast
         self.speed = self.speed * 1.5
     end

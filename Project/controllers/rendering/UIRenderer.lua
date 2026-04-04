@@ -184,27 +184,56 @@ function UIRenderer:drawTitle(highScore, difficulty)
     love.graphics.setColor(1, 1, 1)
 end
 
-function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore)
+function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCounts)
     love.graphics.setColor(0, 0, 0, 0.7)
     love.graphics.rectangle("fill", 0, 0, C.WINDOW_WIDTH, C.WINDOW_HEIGHT)
 
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(1, 0.2, 0.2)
     local go = "GAME OVER"
-    love.graphics.print(go, 400 - self.bigFont:getWidth(go) / 2, 180)
+    love.graphics.print(go, 400 - self.bigFont:getWidth(go) / 2, 100)
 
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
     local st = "Score: " .. score
-    love.graphics.print(st, 400 - self.medFont:getWidth(st) / 2, 240)
+    love.graphics.print(st, 400 - self.medFont:getWidth(st) / 2, 150)
 
     local wt = "Wave Reached: " .. wave
-    love.graphics.print(wt, 400 - self.medFont:getWidth(wt) / 2, 270)
+    love.graphics.print(wt, 400 - self.medFont:getWidth(wt) / 2, 180)
 
     if isNewHighScore then
         love.graphics.setColor(1, 1, 0.2)
         local nhs = "NEW HIGH SCORE!"
-        love.graphics.print(nhs, 400 - self.medFont:getWidth(nhs) / 2, 310)
+        love.graphics.print(nhs, 400 - self.medFont:getWidth(nhs) / 2, 215)
+    end
+
+    -- Kill breakdown
+    if killCounts then
+        love.graphics.setFont(self.smallFont)
+        love.graphics.setColor(0.8, 0.8, 0.8)
+        local totalKills = 0
+        for _, v in pairs(killCounts) do totalKills = totalKills + v end
+        local killTitle = "Kills: " .. totalKills
+        love.graphics.print(killTitle, 400 - self.smallFont:getWidth(killTitle) / 2, 250)
+
+        local killTypes = {
+            {name = "Chaser", key = "chaser", color = {1, 0.2, 0.2}},
+            {name = "Shooter", key = "shooter", color = {0.7, 0.2, 1}},
+            {name = "Tank", key = "tank", color = {1, 0.6, 0.1}},
+            {name = "Speeder", key = "speeder", color = {1, 1, 0.2}},
+            {name = "Boss", key = "boss", color = {1, 0.3, 0.1}},
+        }
+        local ky = 270
+        for _, kt in ipairs(killTypes) do
+            local count = killCounts[kt.key] or 0
+            if count > 0 then
+                love.graphics.setColor(kt.color[1], kt.color[2], kt.color[3])
+                local txt = kt.name .. ": " .. count
+                love.graphics.print(txt, 400 - self.smallFont:getWidth(txt) / 2, ky)
+                ky = ky + 18
+            end
+        end
+        love.graphics.setFont(self.medFont)
     end
 
     love.graphics.setColor(0.7, 0.7, 0.7)
@@ -213,7 +242,11 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore)
 
     love.graphics.setColor(1, 1, 1, 0.7 + math.sin(love.timer.getTime() * 3) * 0.3)
     local rt = "Press ENTER to Restart"
-    love.graphics.print(rt, 400 - self.medFont:getWidth(rt) / 2, 400)
+    love.graphics.print(rt, 400 - self.medFont:getWidth(rt) / 2, 390)
+
+    love.graphics.setColor(1, 0.5, 0.5, 0.8)
+    local qt = "Q - Quit to Menu"
+    love.graphics.print(qt, 400 - self.medFont:getWidth(qt) / 2, 420)
 
     love.graphics.setColor(1, 1, 1)
 end
@@ -225,12 +258,20 @@ function UIRenderer:drawPause()
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(1, 1, 1)
     local pt = "PAUSED"
-    love.graphics.print(pt, 400 - self.bigFont:getWidth(pt) / 2, 260)
+    love.graphics.print(pt, 400 - self.bigFont:getWidth(pt) / 2, 220)
 
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(0.7, 0.7, 0.7)
-    local rt = "Press ESC to Resume"
-    love.graphics.print(rt, 400 - self.medFont:getWidth(rt) / 2, 310)
+    local rt = "ESC - Resume"
+    love.graphics.print(rt, 400 - self.medFont:getWidth(rt) / 2, 280)
+
+    love.graphics.setColor(0.5, 0.8, 1)
+    local restart = "R - Restart"
+    love.graphics.print(restart, 400 - self.medFont:getWidth(restart) / 2, 310)
+
+    love.graphics.setColor(1, 0.5, 0.5)
+    local quit = "Q - Quit to Menu"
+    love.graphics.print(quit, 400 - self.medFont:getWidth(quit) / 2, 340)
 
     love.graphics.setColor(1, 1, 1)
 end

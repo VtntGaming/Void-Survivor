@@ -30,11 +30,9 @@ function ScoreController:update(dt)
         self.comboTimer = self.comboTimer - dt
         if self.comboTimer <= 0 and self.combo > 0 then
             -- Combo break
-            if self.comboTier > 1 then
-                self.lastComboMultiplier = self.comboMultiplier
-                self.comboBreakDisplay = C.COMBO_BREAK_DISPLAY
-                self.eventBus:emit("combo:break")
-            end
+            self.lastComboMultiplier = self.comboMultiplier
+            self.comboBreakDisplay = C.COMBO_BREAK_DISPLAY
+            self.eventBus:emit("combo:break")
             self.combo = 0
             self.comboTier = 1
             self.comboMultiplier = C.COMBO_TIERS[1]

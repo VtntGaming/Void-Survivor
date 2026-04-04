@@ -1,5 +1,6 @@
 local Particles = {}
 
+local C = require("utils.Constants")
 local particles = {}
 
 function Particles.spawn(x, y, color, count, speed, lifetime)
@@ -7,6 +8,10 @@ function Particles.spawn(x, y, color, count, speed, lifetime)
     speed = speed or 100
     lifetime = lifetime or 0.5
     for i = 1, count do
+        -- Enforce max particle limit
+        if #particles >= C.MAX_PARTICLES then
+            table.remove(particles, 1)
+        end
         local angle = math.random() * math.pi * 2
         local spd = speed * (0.5 + math.random() * 0.5)
         table.insert(particles, {

@@ -78,37 +78,68 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 [TECHNICAL PLAN]
 ================================================================================
 
-File Structure:
+Current File Structure:
   Project/
-    main.lua          -- Entry point, game loop, state management
-    player.lua        -- Player module
-    enemy.lua         -- Enemy module (factory pattern)
-    bullet.lua        -- Bullet/projectile module
-    powerup.lua       -- Power-up module
-    wave.lua          -- Wave management
-    ui.lua            -- HUD and menu rendering
-    particles.lua     -- Particle effects
-    utils.lua         -- Utility functions (collision, math)
-    conf.lua          -- Love2D configuration
+    main.lua                              -- Thin Love2D entry point
+    conf.lua                              -- Love2D configuration
+    controllers/
+      GameController.lua                  -- Main game orchestration
+      StateController.lua                 -- Menu / play / pause / gameover
+      input/InputController.lua           -- Keyboard + mouse input
+      audio/AudioController.lua           -- Procedural 8-bit SFX
+      data/SaveController.lua             -- Save / load high score + settings
+      gameplay/EntityController.lua       -- Player / enemies / bullets / powerups
+      gameplay/CollisionController.lua    -- Combat + pickup collisions
+      gameplay/SpawnController.lua        -- Difficulty-aware spawning
+      gameplay/WaveController.lua         -- Wave pacing + boss waves
+      gameplay/ScoreController.lua        -- Score + combo handling
+      rendering/BackgroundRenderer.lua    -- Grid + star parallax
+      rendering/UIRenderer.lua            -- HUD + menu + overlay rendering
+      rendering/RenderController.lua      -- Render composition + camera shake
+    entities/
+      Player.lua                          -- Player entity + weapon power-ups
+      Bullet.lua                          -- Player / enemy / heavy bullets
+      PowerUp.lua                         -- Health / speed / rapid / shield / weapons
+      enemies/                            -- Chaser / Shooter / Tank / Speeder / Boss
+    systems/
+      EventBus.lua                        -- Pub/sub system
+      Particles.lua                       -- Global particle effects
+    utils/
+      Constants.lua                       -- Tunable constants
+      Utils.lua                           -- Math helpers
+
+Documentation note:
+  - `GAME_PLAN.txt` keeps the core concept and high-level design.
+  - `CHANGELOG.txt` tracks implementation history.
+  - `PRIORITY_GAME_PLAN.txt` tracks backlog / todo / done for next development steps.
 
 ================================================================================
 [PROGRESS LOG]
 ================================================================================
 
-[2026-04-04] Project started
-  - [x] Created game plan document
-  - [x] Setup project structure (conf.lua, utils.lua, main.lua, etc.)
-  - [x] Implement conf.lua (800x600 window, title "Void Survivor")
-  - [x] Implement utils.lua (distance, collision, normalize, edge spawn)
-  - [x] Implement player.lua (WASD movement, mouse aim, shooting, power-ups)
-  - [x] Implement bullet.lua (player & enemy bullets, glow effects)
-  - [x] Implement enemy.lua (4 types: chaser, shooter, tank, speeder)
-  - [x] Implement wave.lua (wave progression, enemy spawning, break timer)
-  - [x] Implement powerup.lua (health, speed, rapid fire, shield)
-  - [x] Implement ui.lua (HUD, title screen, game over, pause)
-  - [x] Implement game states (menu, play, pause, gameover) in main.lua
-  - [x] Implement particles.lua (explosion effects, hit sparks)
-  - [x] First test run - game launches successfully, no errors
-  - [ ] Final review & polish
+[2026-04-04] Initial playable version completed
+  - [x] Core Love2D game loop and window configuration
+  - [x] Player movement, aiming, shooting, HP and invincibility frames
+  - [x] Enemy roster: chaser, shooter, tank, speeder
+  - [x] Wave progression and score system
+  - [x] Pickups: health, speed, rapid fire, shield
+  - [x] HUD, title screen, pause and game over screens
+  - [x] Test run completed successfully
+
+[2026-04-04] Architecture scale-up completed
+  - [x] Refactored into controller-based architecture
+  - [x] Added EventBus, SaveController, AudioController and RenderController
+  - [x] Added boss waves, combo system, difficulty selection and weapon power-ups
+  - [x] Added parallax background and persistence for high score/settings
+
+[2026-04-04] Post-integration polish completed
+  - [x] Removed legacy flat-file implementation and dead code
+  - [x] Fixed input cleanup, combo feedback and screen shake stability
+  - [x] Improved enemy AI: Speeder weave + Shooter strafe/burst fire
+  - [x] Added hybrid late-game boss waves
+  - [x] Expanded pause/gameover controls (restart / quit to menu)
+  - [x] Added F11 fullscreen toggle, screen flash effects and kill breakdown stats
+  - [x] Added entity safety limits for bullets, particles and power-ups
+  - [x] Final review & polish complete; see `CHANGELOG.txt` for the detailed history.
 
 ================================================================================

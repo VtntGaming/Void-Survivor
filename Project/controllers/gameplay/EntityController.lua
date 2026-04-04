@@ -1,5 +1,6 @@
 local Particles = require("systems.Particles")
 local Player = require("entities.Player")
+local C = require("utils.Constants")
 
 local EntityController = {}
 EntityController.__index = EntityController
@@ -43,6 +44,10 @@ function EntityController:update(dt, playerX, playerY)
             table.remove(self.bullets, i)
         end
     end
+    -- Enforce bullet limit
+    while #self.bullets > C.MAX_BULLETS do
+        table.remove(self.bullets, 1)
+    end
 
     -- Update power-ups
     for i = #self.powerups, 1, -1 do
@@ -51,6 +56,10 @@ function EntityController:update(dt, playerX, playerY)
         if not pu.alive then
             table.remove(self.powerups, i)
         end
+    end
+    -- Enforce powerup limit
+    while #self.powerups > C.MAX_POWERUPS do
+        table.remove(self.powerups, 1)
     end
 
     -- Update particles

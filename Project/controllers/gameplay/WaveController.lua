@@ -44,7 +44,12 @@ function WaveController:nextWave()
     self.bossAlive = false
 
     if self.isBossWave then
-        self.spawnQueue = 0  -- boss wave: only boss
+        -- Hybrid boss waves: wave 10+ also spawn regular enemies alongside boss
+        if self.current >= 10 then
+            self.spawnQueue = math.floor(self.spawnController:getEnemyCountForWave(self.current) * 0.5)
+        else
+            self.spawnQueue = 0  -- early boss waves: only boss
+        end
     else
         self.spawnQueue = self.spawnController:getEnemyCountForWave(self.current)
     end

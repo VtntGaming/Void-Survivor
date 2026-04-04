@@ -80,6 +80,8 @@ Constants.POWERUP_LIFETIME = 8
 Constants.POWERUP_DROP_CHANCE = 0.25
 Constants.POWERUP_BOSS_DROP_COUNT = 2
 Constants.HEAL_AMOUNT = 25
+Constants.SPEED_BOOST_DURATION = 5
+Constants.RAPID_FIRE_DURATION = 5
 
 -- Combo
 Constants.COMBO_WINDOW = 2.0       -- seconds to keep combo
@@ -96,6 +98,26 @@ Constants.DIFFICULTY_LIST = {"easy", "normal", "hard"}
 
 -- Audio
 Constants.SFX_VOLUME = 0.3
+
+-- Screen shake
+Constants.SCREEN_SHAKE_MAX_OFFSET = 6
+Constants.SCREEN_SHAKE_DECAY_RATE = 8
+Constants.SCREEN_SHAKE_ENEMY_HIT = 2
+Constants.SCREEN_SHAKE_PLAYER_HIT_BULLET = 3
+Constants.SCREEN_SHAKE_PLAYER_HIT_CONTACT = 4
+Constants.SCREEN_SHAKE_BOSS_KILL = 6
+
+-- Collision
+Constants.ENEMY_KNOCKBACK_DIST = 30
+Constants.AOE_DAMAGE_MULT = 0.5
+
+-- Entity limits
+Constants.MAX_BULLETS = 200
+Constants.MAX_PARTICLES = 300
+Constants.MAX_POWERUPS = 15
+
+-- Screen flash
+Constants.SCREEN_FLASH_DURATION = 0.15
 
 -- Background
 Constants.GRID_SPACING = 40

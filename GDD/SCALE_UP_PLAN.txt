@@ -3,6 +3,11 @@
               Controller Architecture + New Features
 ================================================================================
 
+Status note:
+- This architecture plan is now fully implemented.
+- Detailed implementation history is consolidated in `CHANGELOG.txt`.
+- Active roadmap / backlog is tracked in `PRIORITY_GAME_PLAN.txt`.
+
 [ARCHITECTURE OVERVIEW]
 ================================================================================
 
@@ -189,5 +194,6 @@ PHASE 3: Integration & Test
 [x] Phase 1 - Foundation + Entities        -- DONE
 [x] Phase 2 - Controllers                  -- DONE
 [x] Phase 3 - Integration & Test           -- DONE - Game runs correctly with no errors
+[x] Post-v2 polish cycles                  -- DONE - cleanup, AI improvements, QoL and performance safeguards added
 
 ================================================================================
