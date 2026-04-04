@@ -8,6 +8,14 @@ Status : Playable prototype with controller architecture, boss waves, combo,
          persistence, procedural audio and post-integration polish complete
 ================================================================================
 
+[2026-04-04] - ExtendedGDD documentation sync
+--------------------------------------------------------------------------------
+Updated:
+- Expanded the official design direction around dark sci-fi environments,
+  orange hero-ship styling, and clean circular HUD motifs
+- Added clearer notes for accessibility, control support, QA metrics,
+  localization-readiness, and presentation priorities in the roadmap docs
+
 [v0.1.0] - Initial Playable Prototype
 --------------------------------------------------------------------------------
 Added:

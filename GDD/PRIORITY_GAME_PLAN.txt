@@ -16,10 +16,11 @@ Already strong:
 - Weapon power-ups and boss-phase spectacle
 
 Main gaps now:
-- Balance and pacing still need playtest iteration
-- Mid/late-game content depth is still limited
+- Balance and pacing still need repeated playtest iteration
+- Mid/late-game content depth and build variety are still limited
+- Art identity needs a stronger unified pass around the dark sci-fi / neon look from the concept references
+- Accessibility / settings / onboarding / localization are still light
 - Meta progression and retention systems are not present yet
-- Accessibility / settings / onboarding are still light
 
 ================================================================================
 [PRIORITY ORDER]
@@ -85,9 +86,12 @@ UX / Menus
    - Strong usability improvements with relatively low engineering cost.
    Tasks:
    - [TODO] Add adjustable SFX volume UI in menu
+   - [TODO] Add music mute / volume controls alongside SFX settings
    - [TODO] Add toggle for screenshake intensity or disable option
    - [TODO] Add color/accessibility-friendly UI contrast pass
    - [TODO] Consider auto-fire toggle in menu options
+   - [TODO] Add input remap plan for keyboard and future gamepad support
+   - [TODO] Prepare UI text to be localization-friendly (VN/EN ready structure)
 
 ================================================================================
 [TODO - P1 / HIGH VALUE]
@@ -122,6 +126,9 @@ UX / Menus
 7. WORLD & PRESENTATION EXPANSION
    Priority: P2
    - [BACKLOG] More background themes / arena biomes
+   - [BACKLOG] Push the visual identity toward a dark sci-fi battlefield with alien ruins / wreck silhouettes
+   - [BACKLOG] Evolve the HUD with subtle circular high-tech motifs inspired by the concept reference while keeping clarity
+   - [BACKLOG] Finalize a consistent ship / enemy silhouette language and neon color palette
    - [BACKLOG] Animated title screen and stronger visual identity
    - [BACKLOG] Impact lines, hit-stop and richer VFX pass
    - [BACKLOG] Better boss intro / warning presentation
@@ -136,9 +143,11 @@ UX / Menus
 9. TECH / QUALITY IMPROVEMENTS
    Priority: P2
    - [BACKLOG] Spatial partitioning for collision performance at very high entity counts
+   - [BACKLOG] Bullet / object pooling if profiling shows allocation pressure
    - [BACKLOG] More robust save-data validation / corruption handling
    - [BACKLOG] Automated smoke test checklist for release candidates
    - [BACKLOG] More debug overlays for balancing and spawn analysis
+   - [BACKLOG] Track playtest metrics such as average survival time, average wave reached, and major FPS drops
 
 ================================================================================
 [BACKLOG - P3 / LONG TERM]

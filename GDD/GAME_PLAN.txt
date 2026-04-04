@@ -11,12 +11,11 @@ Genre: Top-down Arena Survival Shooter
 Engine: Love2D 11.5
 
 Concept:
-- Player controls a spaceship/character in a 2D arena
-- Waves of enemies spawn from edges of the screen
-- Player must survive as long as possible, earning score
-- Enemies get harder each wave (faster, more health, more quantity)
-- Player can collect power-ups dropped by enemies
-- Simple but addictive arcade-style gameplay
+- Player pilots a spaceship/character in a 2D arena inspired by dark sci-fi ruins and space-battle scenery
+- Waves of enemies spawn from the edges of the screen and escalate in number, pressure, and danger
+- The main goal is to survive as long as possible, chase high scores, and build short-session replayability
+- Power-ups dropped by enemies create moment-to-moment build variety and reward aggressive play
+- The game aims for simple but addictive arcade-style gameplay with strong neon visual feedback and readable combat pacing
 
 ================================================================================
 [GAME DESIGN]
@@ -58,21 +57,40 @@ Type 4 - Speeder (Yellow): Very fast, low HP, appears in later waves
 - Wave completion bonus: wave_number * 50
 
 --- SCREENS ---
-1. Title Screen: Game title, "Press ENTER to Start", High Score display
-2. Gameplay Screen: Main game with HUD
-3. Game Over Screen: Final score, "Press ENTER to Restart"
-4. Pause Screen: "PAUSED" overlay, "Press ESC to Resume"
+1. Title Screen: Game title, difficulty selection, high score display, quick controls hint
+2. Gameplay Screen: Main combat view with HUD and active power-up readouts
+3. Pause Screen: "PAUSED" overlay with resume / restart / quit-to-menu actions
+4. Settings Screen: target menu for audio, screen shake, auto-fire, and future remap options
+5. Game Over Screen: final score, kill breakdown, restart and return-to-menu flow
 
 --- HUD ---
 - Top-left: HP bar
-- Top-right: Score
-- Top-center: Wave number
-- Bottom-center: Active power-up indicators
+- Top-right: Score and Best score
+- Top-center: Wave number and combo feedback
+- Bottom-center: Active power-up indicators and weapon timer
+- Visual direction: futuristic circular / sci-fi motifs while keeping the HUD readable during heavy combat
 
 --- ARENA ---
 - Fixed size: 800x600 (window size)
-- Dark background with subtle grid pattern
+- Dark background with subtle grid pattern and parallax stars
+- Background art direction can evolve toward alien ruins / shipwreck silhouettes from the concept references
 - Borders are walls (player and enemies confined)
+
+--- CONTROLS & ACCESSIBILITY ---
+- Primary input: WASD / Arrows for movement + Mouse for aim/shoot
+- Current quick actions: ESC pause, Enter restart/start, F11 fullscreen
+- Target support: gamepad input, remappable controls, music/SFX sliders, screen shake toggle
+- UI should keep high contrast, readable text, and color + icon based status indicators
+
+--- ART & AUDIO DIRECTION ---
+- Player ship direction: sleek, fast, heroic silhouette; warm orange/yellow paint is a strong candidate
+- Enemy presentation should contrast clearly with the player using bold threat colors and readable silhouettes
+- Audio direction: retro synth / electronic / space ambient
+- Effects should emphasize neon hits, explosions, boss phase changes, and arcade intensity
+
+--- QA TARGETS ---
+- Maintain smooth 60 FPS on target desktop hardware
+- Track playtest metrics: average survival time, average wave reached, perceived fairness, and HUD readability
 
 ================================================================================
 [TECHNICAL PLAN]
