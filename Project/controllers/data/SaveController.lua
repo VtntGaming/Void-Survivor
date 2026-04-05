@@ -12,7 +12,8 @@ function SaveController.new()
         screenShake = "full",
         firstRun = true,
         autoFire = false,
-        musicVolume = 0.5
+        musicVolume = 0.5,
+        language = "en"
     }
     self:load()
     return self
@@ -27,6 +28,7 @@ function SaveController:save()
     content = content .. "firstRun=" .. tostring(self.data.firstRun) .. "\n"
     content = content .. "autoFire=" .. tostring(self.data.autoFire) .. "\n"
     content = content .. "musicVolume=" .. tostring(self.data.musicVolume) .. "\n"
+    content = content .. "language=" .. tostring(self.data.language) .. "\n"
     love.filesystem.write("save.dat", content)
 end
 
@@ -55,6 +57,10 @@ function SaveController:load()
                 self.data.autoFire = (value == "true")
             elseif key == "musicVolume" then
                 self.data.musicVolume = tonumber(value) or 0.5
+            elseif key == "language" then
+                if value == "en" or value == "vn" then
+                    self.data.language = value
+                end
             end
         end
     end
@@ -124,6 +130,15 @@ end
 
 function SaveController:setMusicVolume(vol)
     self.data.musicVolume = math.max(0, math.min(1, vol))
+    self:save()
+end
+
+function SaveController:getLanguage()
+    return self.data.language
+end
+
+function SaveController:setLanguage(lang)
+    self.data.language = lang
     self:save()
 end
 

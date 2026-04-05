@@ -1,4 +1,5 @@
 local C = require("utils.Constants")
+local L = require("utils.Localization")
 
 local UIRenderer = {}
 UIRenderer.__index = UIRenderer
@@ -63,23 +64,23 @@ function UIRenderer:drawHUD(player, score, wave, highScore, comboMult, comboBrea
     love.graphics.setColor(1, 1, 1, 0.8)
     love.graphics.rectangle("line", barX, barY, barW, barH)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("HP: " .. math.floor(player.hp) .. "/" .. player.maxHp, barX + 5, barY + 1)
+    love.graphics.print(L.get("hp_label", math.floor(player.hp), player.maxHp), barX + 5, barY + 1)
 
     -- Score
     local font = self.smallFont
-    local scoreText = "Score: " .. score
+    local scoreText = L.get("score_label", score)
     local stw = font:getWidth(scoreText)
     love.graphics.setColor(1, 1, 0.5)
     love.graphics.print(scoreText, 790 - stw, 10)
 
     -- High Score
-    local hsText = "Best: " .. highScore
+    local hsText = L.get("best_label", highScore)
     local hstw = font:getWidth(hsText)
     love.graphics.setColor(0.7, 0.7, 0.7)
     love.graphics.print(hsText, 790 - hstw, 28)
 
     -- Wave
-    local waveText = "Wave " .. wave
+    local waveText = L.get("wave_label", wave)
     local wtw = font:getWidth(waveText)
     love.graphics.setColor(1, 1, 1)
     love.graphics.print(waveText, 400 - wtw / 2, 10)
@@ -97,7 +98,7 @@ function UIRenderer:drawHUD(player, score, wave, highScore, comboMult, comboBrea
     -- Combo break display
     if comboBreakDisplay and comboBreakDisplay > 0 then
         love.graphics.setFont(self.medFont)
-        local breakText = "COMBO BREAK!"
+        local breakText = L.get("combo_break")
         local bw = self.medFont:getWidth(breakText)
         local alpha = math.min(1, comboBreakDisplay)
         love.graphics.setColor(1, 0.2, 0.2, alpha)
@@ -215,14 +216,14 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
     -- Title
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(0.2, 0.8, 1)
-    local title = "VOID SURVIVOR"
+    local title = L.get("title")
     local tw = self.bigFont:getWidth(title)
     love.graphics.print(title, 400 - tw / 2, 120)
 
     -- Subtitle + version
     love.graphics.setFont(self.smallFont)
     love.graphics.setColor(0.6, 0.6, 0.8)
-    local sub = "Top-Down Arena Survival Shooter"
+    local sub = L.get("subtitle")
     local sw = self.smallFont:getWidth(sub)
     love.graphics.print(sub, 400 - sw / 2, 165)
 
@@ -234,7 +235,7 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
     -- Difficulty selector
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1, 0.7)
-    local diffLabel = "Difficulty:"
+    local diffLabel = L.get("difficulty")
     local dlw = self.medFont:getWidth(diffLabel)
     love.graphics.print(diffLabel, 400 - dlw / 2, 220)
 
@@ -257,7 +258,7 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
             love.graphics.rectangle("fill", bx, by, bw, bh, 4, 4)
             love.graphics.setColor(0.8, 0.8, 0.8)
         end
-        local dt = string.upper(diff)
+        local dt = L.get(diff)
         local dtw = self.medFont:getWidth(dt)
         love.graphics.print(dt, dx + 50 - dtw / 2 - 5, 253)
     end
@@ -265,11 +266,11 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
     -- Instructions
     love.graphics.setFont(self.smallFont)
     love.graphics.setColor(0.6, 0.6, 0.8)
-    love.graphics.print("Left/Right or click to change difficulty", 400 - self.smallFont:getWidth("Left/Right or click to change difficulty") / 2, 290)
+    love.graphics.print(L.get("diff_hint"), 400 - self.smallFont:getWidth(L.get("diff_hint")) / 2, 290)
 
     -- Start button (clickable)
     love.graphics.setFont(self.medFont)
-    local start = "Press ENTER to Start"
+    local start = L.get("start")
     local stw = self.medFont:getWidth(start)
     local startX, startY, startW, startH = 400 - stw / 2 - 10, 332, stw + 20, 35
     local startHover = self:isHovered(startX, startY, startW, startH)
@@ -284,7 +285,7 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
 
     -- Settings button
     love.graphics.setFont(self.smallFont)
-    local settingsText = "Settings"
+    local settingsText = L.get("settings")
     local settW = self.smallFont:getWidth(settingsText)
     local sbx, sby, sbw, sbh = 400 - settW / 2 - 10, 372, settW + 20, 22
     local settHover = self:isHovered(sbx, sby, sbw, sbh)
@@ -305,16 +306,16 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
     love.graphics.rectangle("line", panelX, panelY, panelW, panelH, 6, 6)
 
     local leftCol = {
-        {color = {0.4, 0.7, 1}, text = "Controls"},
-        {color = {0.6, 0.6, 0.8}, text = "WASD / Arrows - Move"},
-        {color = {0.6, 0.6, 0.8}, text = "Mouse - Aim & Shoot"},
-        {color = {0.6, 0.6, 0.8}, text = "ESC - Pause  |  F11 - Fullscreen"},
+        {color = {0.4, 0.7, 1}, text = L.get("controls")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("ctrl_move")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("ctrl_aim")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("ctrl_pause")},
     }
     local rightCol = {
-        {color = {1, 0.8, 0.3}, text = "Tips"},
-        {color = {0.6, 0.6, 0.8}, text = "Kill fast for combo multiplier!"},
-        {color = {0.6, 0.6, 0.8}, text = "Grab power-ups for weapons & heals"},
-        {color = {0.6, 0.6, 0.8}, text = "Every 5th wave spawns a boss"},
+        {color = {1, 0.8, 0.3}, text = L.get("tips")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("tip_combo")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("tip_powerup")},
+        {color = {0.6, 0.6, 0.8}, text = L.get("tip_boss")},
     }
 
     local lx = panelX + 20
@@ -331,7 +332,7 @@ function UIRenderer:drawTitle(highScore, difficulty, version)
     -- High Score
     if highScore > 0 then
         love.graphics.setColor(1, 1, 0.5)
-        local hs = "High Score: " .. highScore
+        local hs = L.get("high_score", highScore)
         local hsw = self.smallFont:getWidth(hs)
         love.graphics.print(hs, 400 - hsw / 2, panelY + panelH + 10)
     end
@@ -346,20 +347,20 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCou
 
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(1, 0.2, 0.2)
-    local go = "GAME OVER"
+    local go = L.get("game_over")
     love.graphics.print(go, 400 - self.bigFont:getWidth(go) / 2, 100)
 
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
-    local st = "Score: " .. score
+    local st = L.get("score", score)
     love.graphics.print(st, 400 - self.medFont:getWidth(st) / 2, 150)
 
-    local wt = "Wave Reached: " .. wave
+    local wt = L.get("wave_reached", wave)
     love.graphics.print(wt, 400 - self.medFont:getWidth(wt) / 2, 180)
 
     if isNewHighScore then
         love.graphics.setColor(1, 1, 0.2)
-        local nhs = "NEW HIGH SCORE!"
+        local nhs = L.get("new_high_score")
         love.graphics.print(nhs, 400 - self.medFont:getWidth(nhs) / 2, 215)
     end
 
@@ -369,16 +370,16 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCou
         love.graphics.setColor(0.8, 0.8, 0.8)
         local totalKills = 0
         for _, v in pairs(killCounts) do totalKills = totalKills + v end
-        local killTitle = "Kills: " .. totalKills
+        local killTitle = L.get("kills", totalKills)
         love.graphics.print(killTitle, 400 - self.smallFont:getWidth(killTitle) / 2, 250)
 
         local killTypes = {
-            {name = "Chaser", key = "chaser", color = {1, 0.2, 0.2}},
-            {name = "Shooter", key = "shooter", color = {0.7, 0.2, 1}},
-            {name = "Tank", key = "tank", color = {1, 0.6, 0.1}},
-            {name = "Speeder", key = "speeder", color = {1, 1, 0.2}},
-            {name = "Splitter", key = "splitter", color = {1, 0.25, 0.85}},
-            {name = "Boss", key = "boss", color = {1, 0.3, 0.1}},
+            {name = L.get("chaser"), key = "chaser", color = {1, 0.2, 0.2}},
+            {name = L.get("shooter"), key = "shooter", color = {0.7, 0.2, 1}},
+            {name = L.get("tank"), key = "tank", color = {1, 0.6, 0.1}},
+            {name = L.get("speeder"), key = "speeder", color = {1, 1, 0.2}},
+            {name = L.get("splitter"), key = "splitter", color = {1, 0.25, 0.85}},
+            {name = L.get("boss"), key = "boss", color = {1, 0.3, 0.1}},
         }
         local ky = 270
         for _, kt in ipairs(killTypes) do
@@ -394,11 +395,11 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCou
     end
 
     love.graphics.setColor(0.7, 0.7, 0.7)
-    local hs = "Best: " .. highScore
+    local hs = L.get("best_label", highScore)
     love.graphics.print(hs, 400 - self.medFont:getWidth(hs) / 2, 340)
 
     -- Restart button (clickable)
-    local rt = "Press ENTER to Restart"
+    local rt = L.get("restart")
     local rtw = self.medFont:getWidth(rt)
     local rbx, rby, rbw, rbh = 400 - rtw / 2 - 10, 382, rtw + 20, 35
     local restartHover = self:isHovered(rbx, rby, rbw, rbh)
@@ -411,7 +412,7 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCou
     love.graphics.print(rt, 400 - rtw / 2, 390)
 
     -- Quit button (clickable)
-    local qt = "Q - Quit to Menu"
+    local qt = L.get("quit_menu")
     local qtw = self.medFont:getWidth(qt)
     local qx, qy, qw, qh = 400 - qtw / 2 - 10, 418, qtw + 20, 30
     local quitHover = self:isHovered(qx, qy, qw, qh)
@@ -433,13 +434,13 @@ function UIRenderer:drawPause()
 
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(1, 1, 1)
-    local pt = "PAUSED"
+    local pt = L.get("paused")
     love.graphics.print(pt, 400 - self.bigFont:getWidth(pt) / 2, 220)
 
     love.graphics.setFont(self.medFont)
 
     -- Resume button
-    local rt = "ESC - Resume"
+    local rt = L.get("resume")
     local rtw = self.medFont:getWidth(rt)
     local rbx, rby, rbw, rbh = 400 - rtw / 2 - 10, 273, rtw + 20, 30
     local resumeHover = self:isHovered(rbx, rby, rbw, rbh)
@@ -452,7 +453,7 @@ function UIRenderer:drawPause()
     love.graphics.print(rt, 400 - rtw / 2, 280)
 
     -- Restart button
-    local restart = "R - Restart"
+    local restart = L.get("restart_key")
     local rstw = self.medFont:getWidth(restart)
     local rsx, rsy, rsw, rsh = 400 - rstw / 2 - 10, 303, rstw + 20, 30
     local restartHover = self:isHovered(rsx, rsy, rsw, rsh)
@@ -465,7 +466,7 @@ function UIRenderer:drawPause()
     love.graphics.print(restart, 400 - rstw / 2, 310)
 
     -- Quit button
-    local quit = "Q - Quit to Menu"
+    local quit = L.get("quit_menu")
     local qtw = self.medFont:getWidth(quit)
     local qx, qy, qw, qh = 400 - qtw / 2 - 10, 333, qtw + 20, 30
     local quitHover = self:isHovered(qx, qy, qw, qh)
@@ -479,7 +480,7 @@ function UIRenderer:drawPause()
 
     -- Settings button
     love.graphics.setFont(self.smallFont)
-    local settText = "Settings"
+    local settText = L.get("settings")
     local stw = self.smallFont:getWidth(settText)
     local sx, sy, sw, sh = 400 - stw / 2 - 10, 370, stw + 20, 22
     local settHover = self:isHovered(sx, sy, sw, sh)
@@ -502,14 +503,14 @@ function UIRenderer:drawWaveAnnouncement(waveNum, breakTimer, isBossWave)
     if isBossWave then
         -- Flashing WARNING text above
         love.graphics.setColor(1, 0.1, 0, 0.7 + math.sin(love.timer.getTime() * 8) * 0.3)
-        local warn = "!! WARNING !!"
+        local warn = L.get("warning")
         local ww = self.bigFont:getWidth(warn)
         love.graphics.print(warn, 400 - ww / 2, 200)
 
         love.graphics.setColor(1, 0.3, 0.1, 0.8 + math.sin(love.timer.getTime() * 5) * 0.2)
-        text = "BOSS WAVE " .. waveNum
+        text = L.get("boss_wave", waveNum)
     else
-        text = "Wave " .. waveNum
+        text = L.get("wave_label", waveNum)
     end
     local tw = self.bigFont:getWidth(text)
     love.graphics.print(text, 400 - tw / 2, 240)
@@ -522,7 +523,7 @@ function UIRenderer:drawWaveAnnouncement(waveNum, breakTimer, isBossWave)
     love.graphics.setColor(1, 1, 1)
 end
 
-function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
+function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume, language)
     self:clearButtons()
     love.graphics.setColor(0.05, 0.05, 0.15)
     love.graphics.rectangle("fill", 0, 0, C.WINDOW_WIDTH, C.WINDOW_HEIGHT)
@@ -530,14 +531,14 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
     -- Title
     love.graphics.setFont(self.bigFont)
     love.graphics.setColor(0.2, 0.8, 1)
-    local title = "SETTINGS"
+    local title = L.get("settings_title")
     local tw = self.bigFont:getWidth(title)
     love.graphics.print(title, 400 - tw / 2, 60)
 
     -- SFX Volume
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
-    local volLabel = "SFX Volume"
+    local volLabel = L.get("sfx_volume")
     local vlw = self.medFont:getWidth(volLabel)
     love.graphics.print(volLabel, 400 - vlw / 2, 120)
 
@@ -547,7 +548,7 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
     musicVolume = musicVolume or 0.5
-    local musLabel = "Music Volume"
+    local musLabel = L.get("music_volume")
     local mlw = self.medFont:getWidth(musLabel)
     love.graphics.print(musLabel, 400 - mlw / 2, 210)
 
@@ -556,13 +557,13 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
     -- Instructions
     love.graphics.setFont(self.smallFont)
     love.graphics.setColor(0.6, 0.6, 0.8)
-    local hint = "Click [-]/[+] or use Left/Right to adjust"
+    local hint = L.get("vol_hint")
     love.graphics.print(hint, 400 - self.smallFont:getWidth(hint) / 2, 290)
 
     -- Screen Shake setting
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
-    local shakeLabel = "Screen Shake"
+    local shakeLabel = L.get("screen_shake")
     local slw = self.medFont:getWidth(shakeLabel)
     love.graphics.print(shakeLabel, 400 - slw / 2, 320)
 
@@ -587,7 +588,7 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
             love.graphics.rectangle("fill", bx, by, bw, bh, 4, 4)
             love.graphics.setColor(0.8, 0.8, 0.8)
         end
-        local ot = string.upper(opt)
+        local ot = L.get(opt)
         local otw = self.medFont:getWidth(ot)
         love.graphics.print(ot, ox + 50 - otw / 2 - 5, 353)
     end
@@ -595,12 +596,12 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
     -- Auto-fire toggle
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
-    local afLabel = "Auto-Fire"
+    local afLabel = L.get("auto_fire")
     local afw = self.medFont:getWidth(afLabel)
     love.graphics.print(afLabel, 400 - afw / 2, 400)
 
     autoFire = autoFire or false
-    local afOptions = {{"ON", true}, {"OFF", false}}
+    local afOptions = {{L.get("on"), true}, {L.get("off"), false}}
     for i, opt in ipairs(afOptions) do
         local ox = 310 + (i - 1) * 120
         local bx, by, bw, bh = ox - 5, 430, 100, 30
@@ -626,9 +627,43 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
 
     -- Back button
     love.graphics.setFont(self.medFont)
-    local backText = "ESC - Back"
+    -- Language selector
+    love.graphics.setFont(self.medFont)
+    love.graphics.setColor(1, 1, 1)
+    local langLabel = "Language"
+    local llw = self.medFont:getWidth(langLabel)
+    love.graphics.print(langLabel, 400 - llw / 2, 468)
+
+    language = language or "en"
+    local langOptions = {{"EN", "en"}, {"VN", "vn"}}
+    for i, lopt in ipairs(langOptions) do
+        local lox = 310 + (i - 1) * 120
+        local lbx, lby, lbw, lbh = lox - 5, 498, 100, 30
+        local lhovered = self:isHovered(lbx, lby, lbw, lbh)
+        self:addButton("lang_" .. lopt[2], lbx, lby, lbw, lbh)
+
+        if language == lopt[2] then
+            love.graphics.setColor(0.2, 1, 0.5)
+            love.graphics.rectangle("fill", lbx, lby, lbw, lbh, 4, 4)
+            love.graphics.setColor(0, 0, 0)
+        elseif lhovered then
+            love.graphics.setColor(0.5, 0.5, 0.6)
+            love.graphics.rectangle("fill", lbx, lby, lbw, lbh, 4, 4)
+            love.graphics.setColor(1, 1, 1)
+        else
+            love.graphics.setColor(0.3, 0.3, 0.4)
+            love.graphics.rectangle("fill", lbx, lby, lbw, lbh, 4, 4)
+            love.graphics.setColor(0.8, 0.8, 0.8)
+        end
+        local lotw = self.medFont:getWidth(lopt[1])
+        love.graphics.print(lopt[1], lox + 50 - lotw / 2 - 5, 501)
+    end
+
+    -- Back button
+    love.graphics.setFont(self.medFont)
+    local backText = L.get("back")
     local btw = self.medFont:getWidth(backText)
-    local bbx, bby, bbw, bbh = 400 - btw / 2 - 10, 490, btw + 20, 35
+    local bbx, bby, bbw, bbh = 400 - btw / 2 - 10, 548, btw + 20, 35
     local backHover = self:isHovered(bbx, bby, bbw, bbh)
     self:addButton("back", bbx, bby, bbw, bbh)
     if backHover then
@@ -636,7 +671,7 @@ function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
         love.graphics.rectangle("fill", bbx, bby, bbw, bbh, 4, 4)
     end
     love.graphics.setColor(0.7, 0.7, 0.7)
-    love.graphics.print(backText, 400 - btw / 2, 495)
+    love.graphics.print(backText, 400 - btw / 2, 553)
 
     love.graphics.setColor(1, 1, 1)
 end
@@ -716,7 +751,8 @@ function UIRenderer:drawTutorial(step, timer, totalDuration)
     -- Tutorial text
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1, alpha)
-    local textW = self.medFont:getWidth(step.text)
+    local stepText = step.textKey and L.get(step.textKey) or step.text or ""
+    local textW = self.medFont:getWidth(stepText)
     local totalW = arrowW + textW
     local tx = (C.WINDOW_WIDTH - totalW) / 2
     local ty = panelY + (panelH - self.medFont:getHeight()) / 2
@@ -727,7 +763,7 @@ function UIRenderer:drawTutorial(step, timer, totalDuration)
 
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1, alpha)
-    love.graphics.print(step.text, tx + arrowW, ty)
+    love.graphics.print(stepText, tx + arrowW, ty)
 
     love.graphics.setColor(1, 1, 1)
 end
