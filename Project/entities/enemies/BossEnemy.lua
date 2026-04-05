@@ -37,8 +37,8 @@ function BossEnemy:update(dt, playerX, playerY, bullets)
         self.phaseTransitionTimer = self.phaseTransitionTimer - dt
         if self.phaseTransitionTimer <= 0 then
             self.inPhaseTransition = false
-            self.fireRate = self.fireRate * 0.5
-            self.speed = self.speed * 1.5
+            self.fireRate = self.fireRate * 0.6
+            self.speed = self.speed * 1.3
         end
         -- During transition, boss stands still and pulses
         return

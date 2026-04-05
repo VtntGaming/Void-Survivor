@@ -105,36 +105,93 @@ function UIRenderer:drawHUD(player, score, wave, highScore, comboMult, comboBrea
         love.graphics.setFont(self.smallFont)
     end
 
-    -- Power-up indicators
-    local indicatorY = 575
-    local ix = 250
+    -- Power-up indicators (improved readability)
+    local indicatorY = 568
+    local indicatorH = 24
+    local ix = 200
+    local puSlots = {}
+
     if player.speedBoost then
-        love.graphics.setColor(0.2, 0.5, 1, 0.8)
-        love.graphics.rectangle("fill", ix, indicatorY, 60, 18, 3, 3)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.print("SPD " .. math.ceil(player.speedBoostTimer), ix + 5, indicatorY + 1)
-        ix = ix + 65
+        table.insert(puSlots, {
+            label = "SPD",
+            timer = player.speedBoostTimer,
+            maxTime = C.SPEED_BOOST_DURATION,
+            bgColor = {0.1, 0.3, 0.7, 0.9},
+            barColor = {0.3, 0.6, 1, 0.9},
+            textColor = {1, 1, 1}
+        })
     end
     if player.rapidFire then
-        love.graphics.setColor(1, 1, 0.2, 0.8)
-        love.graphics.rectangle("fill", ix, indicatorY, 60, 18, 3, 3)
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.print("RPD " .. math.ceil(player.rapidFireTimer), ix + 5, indicatorY + 1)
-        ix = ix + 65
+        table.insert(puSlots, {
+            label = "RAPID",
+            timer = player.rapidFireTimer,
+            maxTime = C.RAPID_FIRE_DURATION,
+            bgColor = {0.6, 0.5, 0.0, 0.9},
+            barColor = {1, 0.9, 0.2, 0.9},
+            textColor = {0, 0, 0}
+        })
     end
     if player.shield then
-        love.graphics.setColor(0, 1, 1, 0.8)
-        love.graphics.rectangle("fill", ix, indicatorY, 60, 18, 3, 3)
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.print("SHIELD", ix + 3, indicatorY + 1)
-        ix = ix + 65
+        table.insert(puSlots, {
+            label = "SHIELD",
+            timer = -1,  -- no timer
+            maxTime = 1,
+            bgColor = {0.0, 0.5, 0.5, 0.9},
+            barColor = {0, 1, 1, 0.9},
+            textColor = {0, 0, 0}
+        })
     end
     if player.weaponType ~= "normal" then
-        love.graphics.setColor(1, 0.5, 0, 0.8)
-        love.graphics.rectangle("fill", ix, indicatorY, 75, 18, 3, 3)
-        love.graphics.setColor(1, 1, 1)
-        local wt = string.upper(player.weaponType) .. " " .. math.ceil(player.weaponTimer)
-        love.graphics.print(wt, ix + 3, indicatorY + 1)
+        table.insert(puSlots, {
+            label = string.upper(player.weaponType),
+            timer = player.weaponTimer,
+            maxTime = C.WEAPON_POWERUP_DURATION,
+            bgColor = {0.5, 0.2, 0.0, 0.9},
+            barColor = {1, 0.5, 0.0, 0.9},
+            textColor = {1, 1, 1}
+        })
+    end
+
+    -- Center the power-up bar cluster
+    local slotW = 90
+    local slotGap = 5
+    local totalPuW = #puSlots * slotW + math.max(0, #puSlots - 1) * slotGap
+    ix = (C.WINDOW_WIDTH - totalPuW) / 2
+
+    for _, slot in ipairs(puSlots) do
+        -- Background
+        love.graphics.setColor(0.1, 0.1, 0.15, 0.8)
+        love.graphics.rectangle("fill", ix, indicatorY, slotW, indicatorH, 4, 4)
+
+        -- Timer bar fill
+        if slot.timer >= 0 then
+            local ratio = math.max(0, slot.timer / slot.maxTime)
+            love.graphics.setColor(slot.barColor)
+            love.graphics.rectangle("fill", ix, indicatorY, slotW * ratio, indicatorH, 4, 4)
+
+            -- Flash when low
+            if slot.timer < 2 then
+                local flash = math.sin(love.timer.getTime() * 8) * 0.3 + 0.7
+                love.graphics.setColor(1, 0.2, 0.2, (1 - slot.timer / 2) * flash * 0.3)
+                love.graphics.rectangle("fill", ix, indicatorY, slotW, indicatorH, 4, 4)
+            end
+        else
+            love.graphics.setColor(slot.barColor)
+            love.graphics.rectangle("fill", ix, indicatorY, slotW, indicatorH, 4, 4)
+        end
+
+        -- Border
+        love.graphics.setColor(slot.bgColor)
+        love.graphics.rectangle("line", ix, indicatorY, slotW, indicatorH, 4, 4)
+
+        -- Label and timer text
+        love.graphics.setColor(slot.textColor)
+        local timerStr = slot.timer >= 0 and (" " .. math.ceil(slot.timer) .. "s") or ""
+        local labelText = slot.label .. timerStr
+        local tw = self.smallFont:getWidth(labelText)
+        love.graphics.print(labelText, ix + (slotW - tw) / 2, indicatorY + 4)
+
+        ix = ix + slotW + slotGap
     end
 
     love.graphics.setColor(1, 1, 1)
@@ -236,7 +293,7 @@ function UIRenderer:drawTitle(highScore, difficulty)
         {color = {0.4, 0.7, 1}, text = "Controls"},
         {color = {0.6, 0.6, 0.8}, text = "WASD / Arrows - Move"},
         {color = {0.6, 0.6, 0.8}, text = "Mouse - Aim & Shoot"},
-        {color = {0.6, 0.6, 0.8}, text = "ESC - Pause"},
+        {color = {0.6, 0.6, 0.8}, text = "ESC - Pause  |  F11 - Fullscreen"},
     }
     local rightCol = {
         {color = {1, 0.8, 0.3}, text = "Tips"},
@@ -449,7 +506,7 @@ function UIRenderer:drawWaveAnnouncement(waveNum, breakTimer, isBossWave)
     love.graphics.setColor(1, 1, 1)
 end
 
-function UIRenderer:drawSettings(sfxVolume, screenShake)
+function UIRenderer:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
     self:clearButtons()
     love.graphics.setColor(0.05, 0.05, 0.15)
     love.graphics.rectangle("fill", 0, 0, C.WINDOW_WIDTH, C.WINDOW_HEIGHT)
@@ -459,77 +516,45 @@ function UIRenderer:drawSettings(sfxVolume, screenShake)
     love.graphics.setColor(0.2, 0.8, 1)
     local title = "SETTINGS"
     local tw = self.bigFont:getWidth(title)
-    love.graphics.print(title, 400 - tw / 2, 100)
+    love.graphics.print(title, 400 - tw / 2, 60)
 
     -- SFX Volume
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
     local volLabel = "SFX Volume"
     local vlw = self.medFont:getWidth(volLabel)
-    love.graphics.print(volLabel, 400 - vlw / 2, 180)
+    love.graphics.print(volLabel, 400 - vlw / 2, 120)
 
-    -- Volume slider
-    local sliderX, sliderY = 200, 215
-    local sliderW, sliderH = 400, 30
-    love.graphics.setColor(0.2, 0.2, 0.3)
-    love.graphics.rectangle("fill", sliderX, sliderY, sliderW, sliderH, 4, 4)
-    love.graphics.setColor(0.2, 0.7, 1, 0.8)
-    love.graphics.rectangle("fill", sliderX, sliderY, sliderW * sfxVolume, sliderH, 4, 4)
-    love.graphics.setColor(1, 1, 1, 0.6)
-    love.graphics.rectangle("line", sliderX, sliderY, sliderW, sliderH, 4, 4)
+    self:drawVolumeSlider("vol", sfxVolume, 155)
 
-    -- Volume text
+    -- Music Volume
+    love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
-    local volText = math.floor(sfxVolume * 100) .. "%"
-    local vtw = self.medFont:getWidth(volText)
-    love.graphics.print(volText, 400 - vtw / 2, 218)
+    musicVolume = musicVolume or 0.5
+    local musLabel = "Music Volume"
+    local mlw = self.medFont:getWidth(musLabel)
+    love.graphics.print(musLabel, 400 - mlw / 2, 210)
 
-    -- Volume buttons
-    local downText = "[-]"
-    local upText = "[+]"
-    local dnw = self.medFont:getWidth(downText)
-    local upw = self.medFont:getWidth(upText)
-
-    -- Down button
-    local dbx, dby, dbw, dbh = sliderX - dnw - 20, sliderY, dnw + 10, sliderH
-    local downHover = self:isHovered(dbx, dby, dbw, dbh)
-    self:addButton("vol_down", dbx, dby, dbw, dbh)
-    if downHover then
-        love.graphics.setColor(0.5, 0.3, 0.3, 0.5)
-        love.graphics.rectangle("fill", dbx, dby, dbw, dbh, 4, 4)
-    end
-    love.graphics.setColor(1, 0.5, 0.5)
-    love.graphics.print(downText, dbx + 5, dby + 3)
-
-    -- Up button
-    local ubx, uby, ubw, ubh = sliderX + sliderW + 10, sliderY, upw + 10, sliderH
-    local upHover = self:isHovered(ubx, uby, ubw, ubh)
-    self:addButton("vol_up", ubx, uby, ubw, ubh)
-    if upHover then
-        love.graphics.setColor(0.3, 0.5, 0.3, 0.5)
-        love.graphics.rectangle("fill", ubx, uby, ubw, ubh, 4, 4)
-    end
-    love.graphics.setColor(0.5, 1, 0.5)
-    love.graphics.print(upText, ubx + 5, uby + 3)
+    self:drawVolumeSlider("music", musicVolume, 245)
 
     -- Instructions
     love.graphics.setFont(self.smallFont)
     love.graphics.setColor(0.6, 0.6, 0.8)
-    local hint = "Left/Right or click [-]/[+] to adjust volume"
-    love.graphics.print(hint, 400 - self.smallFont:getWidth(hint) / 2, 260)
+    local hint = "Click [-]/[+] or use Left/Right to adjust"
+    love.graphics.print(hint, 400 - self.smallFont:getWidth(hint) / 2, 290)
 
     -- Screen Shake setting
     love.graphics.setFont(self.medFont)
     love.graphics.setColor(1, 1, 1)
     local shakeLabel = "Screen Shake"
     local slw = self.medFont:getWidth(shakeLabel)
-    love.graphics.print(shakeLabel, 400 - slw / 2, 295)
+    love.graphics.print(shakeLabel, 400 - slw / 2, 320)
 
     screenShake = screenShake or "full"
     local options = C.SCREEN_SHAKE_OPTIONS
     for i, opt in ipairs(options) do
         local ox = 250 + (i - 1) * 120
-        local bx, by, bw, bh = ox - 5, 325, 100, 30
+        local bx, by, bw, bh = ox - 5, 350, 100, 30
         local hovered = self:isHovered(bx, by, bw, bh)
         self:addButton("shake_" .. opt, bx, by, bw, bh)
 
@@ -548,14 +573,46 @@ function UIRenderer:drawSettings(sfxVolume, screenShake)
         end
         local ot = string.upper(opt)
         local otw = self.medFont:getWidth(ot)
-        love.graphics.print(ot, ox + 50 - otw / 2 - 5, 328)
+        love.graphics.print(ot, ox + 50 - otw / 2 - 5, 353)
+    end
+
+    -- Auto-fire toggle
+    love.graphics.setFont(self.medFont)
+    love.graphics.setColor(1, 1, 1)
+    local afLabel = "Auto-Fire"
+    local afw = self.medFont:getWidth(afLabel)
+    love.graphics.print(afLabel, 400 - afw / 2, 400)
+
+    autoFire = autoFire or false
+    local afOptions = {{"ON", true}, {"OFF", false}}
+    for i, opt in ipairs(afOptions) do
+        local ox = 310 + (i - 1) * 120
+        local bx, by, bw, bh = ox - 5, 430, 100, 30
+        local hovered = self:isHovered(bx, by, bw, bh)
+        self:addButton("autofire_" .. tostring(opt[2]), bx, by, bw, bh)
+
+        if autoFire == opt[2] then
+            love.graphics.setColor(0.2, 1, 0.5)
+            love.graphics.rectangle("fill", bx, by, bw, bh, 4, 4)
+            love.graphics.setColor(0, 0, 0)
+        elseif hovered then
+            love.graphics.setColor(0.5, 0.5, 0.6)
+            love.graphics.rectangle("fill", bx, by, bw, bh, 4, 4)
+            love.graphics.setColor(1, 1, 1)
+        else
+            love.graphics.setColor(0.3, 0.3, 0.4)
+            love.graphics.rectangle("fill", bx, by, bw, bh, 4, 4)
+            love.graphics.setColor(0.8, 0.8, 0.8)
+        end
+        local otw = self.medFont:getWidth(opt[1])
+        love.graphics.print(opt[1], ox + 50 - otw / 2 - 5, 433)
     end
 
     -- Back button
     love.graphics.setFont(self.medFont)
     local backText = "ESC - Back"
     local btw = self.medFont:getWidth(backText)
-    local bbx, bby, bbw, bbh = 400 - btw / 2 - 10, 400, btw + 20, 35
+    local bbx, bby, bbw, bbh = 400 - btw / 2 - 10, 490, btw + 20, 35
     local backHover = self:isHovered(bbx, bby, bbw, bbh)
     self:addButton("back", bbx, bby, bbw, bbh)
     if backHover then
@@ -563,7 +620,98 @@ function UIRenderer:drawSettings(sfxVolume, screenShake)
         love.graphics.rectangle("fill", bbx, bby, bbw, bbh, 4, 4)
     end
     love.graphics.setColor(0.7, 0.7, 0.7)
-    love.graphics.print(backText, 400 - btw / 2, 405)
+    love.graphics.print(backText, 400 - btw / 2, 495)
+
+    love.graphics.setColor(1, 1, 1)
+end
+
+function UIRenderer:drawVolumeSlider(prefix, volume, sliderY)
+    love.graphics.setFont(self.medFont)
+    local sliderX = 200
+    local sliderW, sliderH = 400, 25
+    love.graphics.setColor(0.2, 0.2, 0.3)
+    love.graphics.rectangle("fill", sliderX, sliderY, sliderW, sliderH, 4, 4)
+    love.graphics.setColor(0.2, 0.7, 1, 0.8)
+    love.graphics.rectangle("fill", sliderX, sliderY, sliderW * volume, sliderH, 4, 4)
+    love.graphics.setColor(1, 1, 1, 0.6)
+    love.graphics.rectangle("line", sliderX, sliderY, sliderW, sliderH, 4, 4)
+
+    -- Volume text
+    love.graphics.setColor(1, 1, 1)
+    local volText = math.floor(volume * 100) .. "%"
+    local vtw = self.medFont:getWidth(volText)
+    love.graphics.print(volText, 400 - vtw / 2, sliderY + 2)
+
+    -- Buttons
+    local downText = "[-]"
+    local upText = "[+]"
+    local dnw = self.medFont:getWidth(downText)
+    local upw = self.medFont:getWidth(upText)
+
+    local dbx, dby, dbw, dbh = sliderX - dnw - 20, sliderY, dnw + 10, sliderH
+    local downHover = self:isHovered(dbx, dby, dbw, dbh)
+    self:addButton(prefix .. "_down", dbx, dby, dbw, dbh)
+    if downHover then
+        love.graphics.setColor(0.5, 0.3, 0.3, 0.5)
+        love.graphics.rectangle("fill", dbx, dby, dbw, dbh, 4, 4)
+    end
+    love.graphics.setColor(1, 0.5, 0.5)
+    love.graphics.print(downText, dbx + 5, dby + 1)
+
+    local ubx, uby, ubw, ubh = sliderX + sliderW + 10, sliderY, upw + 10, sliderH
+    local upHover = self:isHovered(ubx, uby, ubw, ubh)
+    self:addButton(prefix .. "_up", ubx, uby, ubw, ubh)
+    if upHover then
+        love.graphics.setColor(0.3, 0.5, 0.3, 0.5)
+        love.graphics.rectangle("fill", ubx, uby, ubw, ubh, 4, 4)
+    end
+    love.graphics.setColor(0.5, 1, 0.5)
+    love.graphics.print(upText, ubx + 5, uby + 1)
+end
+
+function UIRenderer:drawTutorial(step, timer, totalDuration)
+    if not step then return end
+
+    -- Fade in/out
+    local alpha = 1
+    if timer > totalDuration - 0.5 then
+        alpha = (totalDuration - timer) / 0.5  -- fade in
+    elseif timer < 0.5 then
+        alpha = timer / 0.5  -- fade out
+    end
+    alpha = math.max(0, math.min(1, alpha))
+
+    -- Background panel
+    local panelW, panelH = 400, 50
+    local panelX = (C.WINDOW_WIDTH - panelW) / 2
+    local panelY = C.WINDOW_HEIGHT - 100
+
+    love.graphics.setColor(0.05, 0.05, 0.2, 0.75 * alpha)
+    love.graphics.rectangle("fill", panelX, panelY, panelW, panelH, 8, 8)
+    love.graphics.setColor(0.3, 0.6, 1, 0.6 * alpha)
+    love.graphics.rectangle("line", panelX, panelY, panelW, panelH, 8, 8)
+
+    -- Icon indicator
+    love.graphics.setColor(0.3, 0.8, 1, alpha)
+    love.graphics.setFont(self.smallFont)
+    local arrow = ">>  "
+    local arrowW = self.smallFont:getWidth(arrow)
+
+    -- Tutorial text
+    love.graphics.setFont(self.medFont)
+    love.graphics.setColor(1, 1, 1, alpha)
+    local textW = self.medFont:getWidth(step.text)
+    local totalW = arrowW + textW
+    local tx = (C.WINDOW_WIDTH - totalW) / 2
+    local ty = panelY + (panelH - self.medFont:getHeight()) / 2
+
+    love.graphics.setFont(self.smallFont)
+    love.graphics.setColor(0.3, 0.8, 1, alpha)
+    love.graphics.print(arrow, tx, ty + 3)
+
+    love.graphics.setFont(self.medFont)
+    love.graphics.setColor(1, 1, 1, alpha)
+    love.graphics.print(step.text, tx + arrowW, ty)
 
     love.graphics.setColor(1, 1, 1)
 end

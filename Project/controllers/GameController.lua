@@ -60,6 +60,16 @@ function GameController.new()
     -- Apply saved volume
     self.audio:setVolume(self.save:getSfxVolume())
 
+    -- Tutorial system
+    self.tutorialActive = false
+    self.tutorialStep = 0
+    self.tutorialTimer = 0
+    self.tutorialSteps = {
+        {duration = 4, text = "WASD / Arrow Keys to Move", icon = "move"},
+        {duration = 4, text = "Mouse to Aim, Click to Shoot", icon = "aim"},
+        {duration = 4, text = "Grab Power-ups dropped by enemies!", icon = "pickup"},
+    }
+
     -- Register event handlers
     self:registerEvents()
 
@@ -109,6 +119,17 @@ function GameController:startGame()
 
     self.state:change(STATES.PLAYING)
     self.render:startZoomIntro()
+
+    -- Apply auto-fire setting
+    self.input.autoFire = self.save:getAutoFire()
+
+    -- Start tutorial on first run
+    if self.save:isFirstRun() then
+        self.tutorialActive = true
+        self.tutorialStep = 1
+        self.tutorialTimer = self.tutorialSteps[1].duration
+        self.save:setFirstRunDone()
+    end
 end
 
 function GameController:update(dt)
@@ -136,6 +157,19 @@ function GameController:update(dt)
 
         -- Score combo timer
         self.score:update(dt)
+
+        -- Tutorial update
+        if self.tutorialActive then
+            self.tutorialTimer = self.tutorialTimer - dt
+            if self.tutorialTimer <= 0 then
+                self.tutorialStep = self.tutorialStep + 1
+                if self.tutorialStep > #self.tutorialSteps then
+                    self.tutorialActive = false
+                else
+                    self.tutorialTimer = self.tutorialSteps[self.tutorialStep].duration
+                end
+            end
+        end
 
         -- Rendering updates
         self.render:update(dt)
@@ -167,7 +201,12 @@ function GameController:draw()
         self.render:drawTitle(self.save:getHighScore(), C.DIFFICULTY_LIST[self.selectedDiffIdx])
 
     elseif currentState == STATES.SETTINGS then
-        self.render:drawSettings(self.save:getSfxVolume(), self.save:getScreenShake())
+        self.render:drawSettings(
+            self.save:getSfxVolume(),
+            self.save:getScreenShake(),
+            self.save:getAutoFire(),
+            self.save:getMusicVolume()
+        )
 
     elseif currentState == STATES.PLAYING or currentState == STATES.PAUSED or currentState == STATES.GAMEOVER then
         self.render:drawGame(
@@ -196,6 +235,14 @@ function GameController:draw()
                 self.isNewHighScore,
                 self.killCounts
             )
+        end
+
+        -- Tutorial overlay
+        if self.tutorialActive and currentState == STATES.PLAYING then
+            local step = self.tutorialSteps[self.tutorialStep]
+            if step then
+                self.render:drawTutorial(step, self.tutorialTimer, step.duration)
+            end
         end
     end
 end
@@ -292,9 +339,17 @@ function GameController:mousepressed(x, y, button)
             self:adjustVolume(-0.1)
         elseif clicked == "vol_up" then
             self:adjustVolume(0.1)
+        elseif clicked == "music_down" then
+            self:adjustMusicVolume(-0.1)
+        elseif clicked == "music_up" then
+            self:adjustMusicVolume(0.1)
         elseif clicked:sub(1, 6) == "shake_" then
             local val = clicked:sub(7)
             self.save:setScreenShake(val)
+        elseif clicked == "autofire_true" then
+            self.save:setAutoFire(true)
+        elseif clicked == "autofire_false" then
+            self.save:setAutoFire(false)
         end
     end
 end
@@ -323,6 +378,13 @@ function GameController:adjustVolume(delta)
     vol = math.floor(vol * 10 + 0.5) / 10  -- round to 0.1
     self.save:setSfxVolume(vol)
     self.audio:setVolume(vol)
+end
+
+function GameController:adjustMusicVolume(delta)
+    local vol = self.save:getMusicVolume()
+    vol = math.max(0, math.min(1, vol + delta))
+    vol = math.floor(vol * 10 + 0.5) / 10
+    self.save:setMusicVolume(vol)
 end
 
 function GameController:diffNameToIndex(name)

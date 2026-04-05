@@ -9,6 +9,7 @@ function InputController.new()
     self.aimY = 0
     self.shooting = false
     self.keysPressed = {}
+    self.autoFire = false
     return self
 end
 
@@ -23,8 +24,8 @@ function InputController:update(dt)
     -- Aim
     self.aimX, self.aimY = love.mouse.getPosition()
 
-    -- Shooting
-    self.shooting = love.mouse.isDown(1)
+    -- Shooting (mouse click or auto-fire)
+    self.shooting = love.mouse.isDown(1) or self.autoFire
 end
 
 function InputController:applyToPlayer(player)

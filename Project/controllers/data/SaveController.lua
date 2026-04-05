@@ -9,7 +9,10 @@ function SaveController.new()
         highScore = 0,
         difficulty = "normal",
         sfxVolume = C.SFX_VOLUME,
-        screenShake = "full"
+        screenShake = "full",
+        firstRun = true,
+        autoFire = false,
+        musicVolume = 0.5
     }
     self:load()
     return self
@@ -21,6 +24,9 @@ function SaveController:save()
     content = content .. "difficulty=" .. tostring(self.data.difficulty) .. "\n"
     content = content .. "sfxVolume=" .. tostring(self.data.sfxVolume) .. "\n"
     content = content .. "screenShake=" .. tostring(self.data.screenShake) .. "\n"
+    content = content .. "firstRun=" .. tostring(self.data.firstRun) .. "\n"
+    content = content .. "autoFire=" .. tostring(self.data.autoFire) .. "\n"
+    content = content .. "musicVolume=" .. tostring(self.data.musicVolume) .. "\n"
     love.filesystem.write("save.dat", content)
 end
 
@@ -43,6 +49,12 @@ function SaveController:load()
                 if value == "off" or value == "low" or value == "full" then
                     self.data.screenShake = value
                 end
+            elseif key == "firstRun" then
+                self.data.firstRun = (value == "true")
+            elseif key == "autoFire" then
+                self.data.autoFire = (value == "true")
+            elseif key == "musicVolume" then
+                self.data.musicVolume = tonumber(value) or 0.5
             end
         end
     end
@@ -85,6 +97,33 @@ end
 
 function SaveController:setScreenShake(val)
     self.data.screenShake = val
+    self:save()
+end
+
+function SaveController:isFirstRun()
+    return self.data.firstRun
+end
+
+function SaveController:setFirstRunDone()
+    self.data.firstRun = false
+    self:save()
+end
+
+function SaveController:getAutoFire()
+    return self.data.autoFire
+end
+
+function SaveController:setAutoFire(val)
+    self.data.autoFire = val
+    self:save()
+end
+
+function SaveController:getMusicVolume()
+    return self.data.musicVolume
+end
+
+function SaveController:setMusicVolume(vol)
+    self.data.musicVolume = math.max(0, math.min(1, vol))
     self:save()
 end
 

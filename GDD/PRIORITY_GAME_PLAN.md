@@ -71,7 +71,7 @@ UX / Menus
      exists instead of adding too much new complexity.
    Tasks:
    - [DONE] Rebalance enemy HP / speed / damage for each difficulty
-   - [TODO] Tune boss HP and attack cadence so boss fights feel threatening but fair
+   - [DONE] Tune boss HP and attack cadence so boss fights feel threatening but fair
    - [DONE] Add a brief round-start zoom-out intro when entering a run
    - [DONE] Fix the enemy respawn/reposition bug so enemies never reappear right beside the player after contact
    - [DONE] Add spawn fade-in opacity and a short grace window before newly spawned regular enemies can deal contact damage
@@ -85,9 +85,9 @@ UX / Menus
    - New players need clearer guidance to understand systems quickly.
    Tasks:
    - [DONE] Add a short gameplay tip panel on the title screen
-   - [TODO] Add first-run tutorial prompts for movement / aim / shoot / pickups
+   - [DONE] Add first-run tutorial prompts for movement / aim / shoot / pickups
    - [DONE] Add clearer telegraphing for boss phase 2 and heavy damage threats
-   - [TODO] Improve readability of active weapon and power-up timers in HUD
+   - [DONE] Improve readability of active weapon and power-up timers in HUD
    - [DONE] Add a red damage-loss effect to the HP UI so health drops are easier to read
    - [DONE] Ensure title / pause / settings GUI can be clicked with the mouse and has hover feedback
 
@@ -97,12 +97,12 @@ UX / Menus
    - Strong usability improvements with relatively low engineering cost.
    Tasks:
    - [DONE] Add adjustable SFX volume UI in menu
-   - [TODO] Add music mute / volume controls alongside SFX settings
+   - [DONE] Add music mute / volume controls alongside SFX settings
    - [DONE] Add toggle for screenshake intensity or disable option
-   - [TODO] Add color/accessibility-friendly UI contrast pass
-   - [TODO] Consider auto-fire toggle in menu options
-   - [TODO] Add input remap plan for keyboard and future gamepad support
-   - [TODO] Prepare UI text to be localization-friendly (VN/EN ready structure)
+   - [DONE] Add color/accessibility-friendly UI contrast pass
+   - [DONE] Consider auto-fire toggle in menu options
+   - [DONE] Add input remap plan for keyboard and future gamepad support
+   - [DONE] Prepare UI text to be localization-friendly (VN/EN ready structure)
 
 ================================================================================
 [TODO - P1 / HIGH VALUE]

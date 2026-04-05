@@ -60,9 +60,9 @@ Constants.ENEMY = {
     boss = {
         color = {1, 0.1, 0.1},
         color2 = {1, 0.8, 0.1},
-        radius = 30, speed = 55, hp = 400,
+        radius = 30, speed = 55, hp = 350,
         damage = 25, score = 500, behavior = "boss",
-        fireRate = 1.0, fanCount = 5, fanSpread = math.rad(60)
+        fireRate = 1.3, fanCount = 7, fanSpread = math.rad(80)
     }
 }
 

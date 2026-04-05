@@ -5,8 +5,28 @@ Project: Void Survivor
 Engine : Love2D 11.5
 Scope  : Consolidated development history after the local polish sprint
 Status : Playable prototype with controller architecture, boss waves, combo,
-         persistence, and a completed P0 QoL / balance pass ready for the next milestone
+         persistence, and all P0 features complete - ready for P1 content expansion
 ================================================================================
+
+[2026-04-05] - P0 Feature Pass Complete
+--------------------------------------------------------------------------------
+Added:
+- First-run tutorial prompts: timed overlay showing movement, aim/shoot, and
+  pickup instructions during the first game session
+- Music volume control slider in Settings alongside existing SFX volume
+- Auto-fire toggle option in Settings (ON/OFF)
+- Localization module (utils/Localization.lua) with full VN/EN ready string table
+- Improved power-up timer HUD: centered bars with fill ratio, low-time flash
+  warning, and clearer label/timer text
+- Input remap info shown in title-screen tips panel (ESC/F11 bindings)
+
+Improved:
+- Boss balance: HP reduced 400→350, fire rate slowed 1.0→1.3s, fan bullets 5→7
+  with wider 80° spread for more spectacle but fairer dodging, phase-2 less
+  aggressive (speed mult 1.5→1.3, fire mult 0.5→0.6)
+- Settings screen reorganized: SFX + Music + Screen Shake + Auto-Fire all on one
+  page with reusable volume slider component
+- UI contrast pass on power-up indicators for better readability in combat
 
 [2026-04-05] - Local polish sprint complete
 --------------------------------------------------------------------------------

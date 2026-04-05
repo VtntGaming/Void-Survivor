@@ -118,8 +118,12 @@ function RenderController:drawGameOver(score, wave, highScore, isNewHighScore, k
     self.ui:drawGameOver(score, wave, highScore, isNewHighScore, killCounts)
 end
 
-function RenderController:drawSettings(sfxVolume, screenShake)
-    self.ui:drawSettings(sfxVolume, screenShake)
+function RenderController:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
+    self.ui:drawSettings(sfxVolume, screenShake, autoFire, musicVolume)
+end
+
+function RenderController:drawTutorial(step, timer, totalDuration)
+    self.ui:drawTutorial(step, timer, totalDuration)
 end
 
 return RenderController
