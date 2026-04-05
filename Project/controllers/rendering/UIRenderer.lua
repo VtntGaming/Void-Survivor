@@ -197,7 +197,7 @@ function UIRenderer:drawHUD(player, score, wave, highScore, comboMult, comboBrea
     love.graphics.setColor(1, 1, 1)
 end
 
-function UIRenderer:drawTitle(highScore, difficulty)
+function UIRenderer:drawTitle(highScore, difficulty, version)
     self:clearButtons()
     love.graphics.setColor(0.05, 0.05, 0.15)
     love.graphics.rectangle("fill", 0, 0, C.WINDOW_WIDTH, C.WINDOW_HEIGHT)
@@ -209,12 +209,17 @@ function UIRenderer:drawTitle(highScore, difficulty)
     local tw = self.bigFont:getWidth(title)
     love.graphics.print(title, 400 - tw / 2, 120)
 
-    -- Subtitle
+    -- Subtitle + version
     love.graphics.setFont(self.smallFont)
     love.graphics.setColor(0.6, 0.6, 0.8)
     local sub = "Top-Down Arena Survival Shooter"
     local sw = self.smallFont:getWidth(sub)
     love.graphics.print(sub, 400 - sw / 2, 165)
+
+    version = version or "dev"
+    local versionText = "Version v" .. version
+    love.graphics.setColor(1, 0.85, 0.35)
+    love.graphics.print(versionText, 400 - self.smallFont:getWidth(versionText) / 2, 184)
 
     -- Difficulty selector
     love.graphics.setFont(self.medFont)

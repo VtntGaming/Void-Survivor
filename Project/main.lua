@@ -1,14 +1,19 @@
--- Void Survivor v2.0
+-- Void Survivor
 -- Controller Architecture
 
 local GameController = require("controllers.GameController")
+local Version = require("utils.Version")
 
 local game
 
 function love.load()
     love.graphics.setBackgroundColor(0.05, 0.05, 0.1)
     math.randomseed(os.time())
-    game = GameController.new()
+
+    Version.load()
+    love.window.setTitle("Void Survivor " .. Version.getDisplay())
+
+    game = GameController.new(Version.get())
 end
 
 function love.update(dt)
