@@ -4,6 +4,7 @@ local ChaserEnemy = require("entities.enemies.ChaserEnemy")
 local ShooterEnemy = require("entities.enemies.ShooterEnemy")
 local TankEnemy = require("entities.enemies.TankEnemy")
 local SpeederEnemy = require("entities.enemies.SpeederEnemy")
+local SplitterEnemy = require("entities.enemies.SplitterEnemy")
 local BossEnemy = require("entities.enemies.BossEnemy")
 local BaseEnemy = require("entities.enemies.BaseEnemy")
 
@@ -15,6 +16,7 @@ local ENEMY_CONSTRUCTORS = {
     shooter = ShooterEnemy.new,
     tank = TankEnemy.new,
     speeder = SpeederEnemy.new,
+    splitter = SplitterEnemy.new,
 }
 
 function SpawnController.new(eventBus)
@@ -48,8 +50,16 @@ function SpawnController:safeEdgePosition(margin)
 end
 
 function SpawnController:spawnEnemy(wave)
-    local types = BaseEnemy.getTypesForWave(wave)
-    local enemyType = types[math.random(#types)]
+    local enemyType
+
+    -- Elite splitter starts appearing in later waves at a controlled rate
+    if wave >= 8 and math.random() < math.min(0.10 + wave * 0.005, 0.22) then
+        enemyType = "splitter"
+    else
+        local types = BaseEnemy.getTypesForWave(wave)
+        enemyType = types[math.random(#types)]
+    end
+
     local x, y = self:safeEdgePosition(30)
     local constructor = ENEMY_CONSTRUCTORS[enemyType]
     return constructor(x, y, self.difficultyMult)

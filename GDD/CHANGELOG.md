@@ -8,6 +8,24 @@ Status : Playable prototype with controller architecture, boss waves, combo,
          persistence, and all P0 features complete - ready for P1 content expansion
 ================================================================================
 
+[2026-04-05] - P1 Kickoff
+--------------------------------------------------------------------------------
+Added:
+- New elite `Splitter` enemy for late waves with a visible charge telegraph and
+  split-on-death behavior that spawns fast child chasers
+- New `Magnet` power-up that temporarily pulls nearby pickups toward the player
+- Adaptive power-up drop weighting based on current player state (low HP, shield,
+  active boosts, and current weapon)
+
+Improved:
+- HUD support for the new magnet timer and game-over kill breakdown support for
+  the new elite enemy class
+- Late-wave enemy composition now has a controlled elite-spawn chance from wave 8+
+
+Verified:
+- `lovec.exe .\Project` launches successfully with no runtime errors after the P1 kickoff changes
+- `love.exe .\Project` launches successfully after the P1 kickoff changes
+
 [2026-04-05] - P0 Feature Pass Complete
 --------------------------------------------------------------------------------
 Added:

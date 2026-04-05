@@ -9,6 +9,7 @@ function BaseEnemy.new(enemyType, x, y, difficultyMult)
     local def = C.ENEMY[enemyType]
     difficultyMult = difficultyMult or C.DIFFICULTY.normal
 
+    self.difficultyMult = difficultyMult
     self.type = enemyType
     self.x = x or 0
     self.y = y or 0

@@ -1,6 +1,7 @@
 local Utils = require("utils.Utils")
 local C = require("utils.Constants")
 local Particles = require("systems.Particles")
+local ChaserEnemy = require("entities.enemies.ChaserEnemy")
 
 local CollisionController = {}
 CollisionController.__index = CollisionController
@@ -10,6 +11,26 @@ function CollisionController.new(eventBus)
     self.eventBus = eventBus
     self.screenShake = 0
     return self
+end
+
+local function spawnSplitterChildren(enemy, enemies)
+    for k = 1, 2 do
+        local offset = (k == 1) and -0.8 or 0.8
+        local angle = enemy.angle + offset
+        local child = ChaserEnemy.new(
+            enemy.x + math.cos(angle) * (enemy.radius + 10),
+            enemy.y + math.sin(angle) * (enemy.radius + 10),
+            enemy.difficultyMult
+        )
+        child.speed = child.speed * 1.15
+        child.hp = math.max(14, child.hp * 0.65)
+        child.maxHp = child.hp
+        child.radius = math.max(7, child.radius * 0.9)
+        child.spawnFadeTimer = 0.2
+        child.spawnGraceTimer = 0.25
+        table.insert(enemies, child)
+    end
+    Particles.spawn(enemy.x, enemy.y, enemy.color, 10, 140, 0.5)
 end
 
 function CollisionController:update(dt, player, enemies, bullets, powerups)
@@ -50,8 +71,11 @@ function CollisionController:playerBulletsVsEnemies(player, enemies, bullets, po
                                     local aoeKilled = other:takeDamage(b.damage * C.AOE_DAMAGE_MULT)
                                     if aoeKilled then
                                         self.eventBus:emit("enemy:killed", other)
+                                        if other.type == "splitter" then
+                                            spawnSplitterChildren(other, enemies)
+                                        end
                                         Particles.spawn(other.x, other.y, other.color, 8, 120, 0.5)
-                                        local pu = PowerUp.randomDrop(other.x, other.y)
+                                        local pu = PowerUp.randomDrop(other.x, other.y, player)
                                         if pu then table.insert(powerups, pu) end
                                     end
                                 end
@@ -62,6 +86,9 @@ function CollisionController:playerBulletsVsEnemies(player, enemies, bullets, po
 
                     if killed then
                         self.eventBus:emit("enemy:killed", e)
+                        if e.type == "splitter" then
+                            spawnSplitterChildren(e, enemies)
+                        end
                         Particles.spawn(e.x, e.y, e.color, 12, 150, 0.6)
                         self.screenShake = math.max(self.screenShake, e.type == "boss" and C.SCREEN_SHAKE_BOSS_KILL or C.SCREEN_SHAKE_ENEMY_HIT)
 
@@ -76,7 +103,7 @@ function CollisionController:playerBulletsVsEnemies(player, enemies, bullets, po
                             end
                             self.eventBus:emit("boss:killed", e)
                         else
-                            local pu = PowerUp.randomDrop(e.x, e.y)
+                            local pu = PowerUp.randomDrop(e.x, e.y, player)
                             if pu then table.insert(powerups, pu) end
                         end
                     end

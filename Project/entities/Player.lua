@@ -28,6 +28,10 @@ function Player.new()
     self.rapidFire = false
     self.rapidFireTimer = 0
     self.shield = false
+    self.magnet = false
+    self.magnetTimer = 0
+    self.magnetRange = C.MAGNET_RANGE
+    self.magnetPullSpeed = C.MAGNET_PULL_SPEED
 
     -- Weapon system
     self.weaponType = "normal"  -- "normal", "spread", "heavy"
@@ -107,6 +111,13 @@ function Player:update(dt, bullets)
         end
     end
 
+    if self.magnet then
+        self.magnetTimer = self.magnetTimer - dt
+        if self.magnetTimer <= 0 then
+            self.magnet = false
+        end
+    end
+
     -- Weapon timer
     if self.weaponType ~= "normal" then
         self.weaponTimer = self.weaponTimer - dt
@@ -180,6 +191,9 @@ function Player:applyPowerUp(puType)
         self.rapidFireTimer = C.RAPID_FIRE_DURATION
     elseif puType == "shield" then
         self.shield = true
+    elseif puType == "magnet" then
+        self.magnet = true
+        self.magnetTimer = C.MAGNET_DURATION
     elseif puType == "spread" then
         self.weaponType = "spread"
         self.weaponTimer = C.WEAPON_POWERUP_DURATION
@@ -196,6 +210,14 @@ function Player:draw()
     love.graphics.push()
     love.graphics.translate(self.x, self.y)
     love.graphics.rotate(self.angle)
+
+    -- Magnet field
+    if self.magnet then
+        love.graphics.setColor(0.8, 0.2, 1, 0.12)
+        love.graphics.circle("fill", 0, 0, self.radius + 14 + math.sin(love.timer.getTime() * 6) * 2)
+        love.graphics.setColor(0.9, 0.5, 1, 0.35)
+        love.graphics.circle("line", 0, 0, self.radius + 10)
+    end
 
     -- Shield bubble
     if self.shield then
