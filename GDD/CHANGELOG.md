@@ -8,6 +8,21 @@ Status : Playable prototype with controller architecture, boss waves, combo,
          persistence, and all P0 features complete - ready for P1 content expansion
 ================================================================================
 
+[2026-04-05] - P0 Audit Fix: Input Remap & Localization Integration
+--------------------------------------------------------------------------------
+Fixed:
+- Input remap plan was marked DONE but had no implementation: added KEY_BINDINGS
+  table to Constants.lua and refactored InputController to use it instead of
+  hardcoded key names. GameController now uses matchesBinding() for all key checks.
+- Localization module (Localization.lua) existed with full VN/EN string tables
+  but was never imported or used: integrated into UIRenderer (all screens),
+  GameController (tutorial steps, language init), RenderController, and
+  SaveController (language persistence). Added language selector to Settings.
+- Added missing 'splitter' enemy name to Localization VN/EN tables.
+
+Verified:
+- Game launches cleanly with no console errors after all changes.
+
 [2026-04-05] - P1 Kickoff
 --------------------------------------------------------------------------------
 Added:

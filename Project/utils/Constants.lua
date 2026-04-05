@@ -140,4 +140,17 @@ Constants.GRID_SPACING = 40
 Constants.STAR_COUNT_SLOW = 30
 Constants.STAR_COUNT_FAST = 20
 
+-- Key bindings (remap plan: change values here to rebind)
+Constants.KEY_BINDINGS = {
+    move_up    = {"w", "up"},
+    move_down  = {"s", "down"},
+    move_left  = {"a", "left"},
+    move_right = {"d", "right"},
+    pause      = {"escape"},
+    restart    = {"r"},
+    quit       = {"q"},
+    fullscreen = {"f11"},
+    confirm    = {"return", "kpenter"},
+}
+
 return Constants

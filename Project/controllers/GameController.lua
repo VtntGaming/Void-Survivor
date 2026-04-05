@@ -14,6 +14,7 @@ local ScoreController = require("controllers.gameplay.ScoreController")
 local BackgroundRenderer = require("controllers.rendering.BackgroundRenderer")
 local UIRenderer = require("controllers.rendering.UIRenderer")
 local RenderController = require("controllers.rendering.RenderController")
+local Localization = require("utils.Localization")
 
 local STATES = StateController.STATES
 
@@ -61,14 +62,17 @@ function GameController.new(appVersion)
     -- Apply saved volume
     self.audio:setVolume(self.save:getSfxVolume())
 
+    -- Apply saved language
+    Localization.setLanguage(self.save:getLanguage())
+
     -- Tutorial system
     self.tutorialActive = false
     self.tutorialStep = 0
     self.tutorialTimer = 0
     self.tutorialSteps = {
-        {duration = 4, text = "WASD / Arrow Keys to Move", icon = "move"},
-        {duration = 4, text = "Mouse to Aim, Click to Shoot", icon = "aim"},
-        {duration = 4, text = "Grab Power-ups dropped by enemies!", icon = "pickup"},
+        {duration = 4, textKey = "tut_move", icon = "move"},
+        {duration = 4, textKey = "tut_aim", icon = "aim"},
+        {duration = 4, textKey = "tut_pickup", icon = "pickup"},
     }
 
     -- Register event handlers
@@ -210,7 +214,8 @@ function GameController:draw()
             self.save:getSfxVolume(),
             self.save:getScreenShake(),
             self.save:getAutoFire(),
-            self.save:getMusicVolume()
+            self.save:getMusicVolume(),
+            self.save:getLanguage()
         )
 
     elseif currentState == STATES.PLAYING or currentState == STATES.PAUSED or currentState == STATES.GAMEOVER then
@@ -256,11 +261,11 @@ function GameController:keypressed(key)
     self.input:keypressed(key)
     local currentState = self.state:get()
 
-    if key == "return" or key == "kpenter" then
+    if self.input:matchesBinding(key, "confirm") then
         if currentState == STATES.MENU or currentState == STATES.GAMEOVER then
             self:startGame()
         end
-    elseif key == "escape" then
+    elseif self.input:matchesBinding(key, "pause") then
         if currentState == STATES.PLAYING then
             self.state:change(STATES.PAUSED)
         elseif currentState == STATES.PAUSED then
@@ -270,31 +275,31 @@ function GameController:keypressed(key)
         elseif currentState == STATES.MENU then
             love.event.quit()
         end
-    elseif key == "r" then
+    elseif self.input:matchesBinding(key, "restart") then
         if currentState == STATES.PAUSED then
             self:startGame()
         end
-    elseif key == "q" then
+    elseif self.input:matchesBinding(key, "quit") then
         if currentState == STATES.PAUSED or currentState == STATES.GAMEOVER then
             self:goToMenu()
         end
-    elseif key == "left" or key == "a" then
+    elseif self.input:matchesBinding(key, "move_left") then
         if currentState == STATES.MENU then
             self.selectedDiffIdx = math.max(1, self.selectedDiffIdx - 1)
         elseif currentState == STATES.SETTINGS then
             self:adjustVolume(-0.1)
         end
-    elseif key == "right" or key == "d" then
+    elseif self.input:matchesBinding(key, "move_right") then
         if currentState == STATES.MENU then
             self.selectedDiffIdx = math.min(#C.DIFFICULTY_LIST, self.selectedDiffIdx + 1)
         elseif currentState == STATES.SETTINGS then
             self:adjustVolume(0.1)
         end
-    elseif key == "up" or key == "down" then
+    elseif self.input:matchesBinding(key, "move_up") or self.input:matchesBinding(key, "move_down") then
         if currentState == STATES.SETTINGS then
-            self:cycleScreenShake(key == "up" and -1 or 1)
+            self:cycleScreenShake(self.input:matchesBinding(key, "move_up") and -1 or 1)
         end
-    elseif key == "f11" then
+    elseif self.input:matchesBinding(key, "fullscreen") then
         love.window.setFullscreen(not love.window.getFullscreen())
     end
 end
@@ -355,6 +360,10 @@ function GameController:mousepressed(x, y, button)
             self.save:setAutoFire(true)
         elseif clicked == "autofire_false" then
             self.save:setAutoFire(false)
+        elseif clicked:sub(1, 5) == "lang_" then
+            local lang = clicked:sub(6)
+            Localization.setLanguage(lang)
+            self.save:setLanguage(lang)
         end
     end
 end

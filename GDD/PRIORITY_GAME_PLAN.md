@@ -102,7 +102,7 @@ UX / Menus
    - [DONE] Add color/accessibility-friendly UI contrast pass
    - [DONE] Consider auto-fire toggle in menu options
    - [DONE] Add input remap plan for keyboard and future gamepad support
-   - [DONE] Prepare UI text to be localization-friendly (VN/EN ready structure)
+   - [DONE] Integrate localization module into UI (VN/EN ready structure - module exists but unused)
 
 ================================================================================
 [TODO - P1 / HIGH VALUE]

@@ -75,6 +75,7 @@ local strings = {
         shooter = "Shooter",
         tank = "Tank",
         speeder = "Speeder",
+        splitter = "Splitter",
         boss = "Boss",
     },
 
@@ -149,6 +150,7 @@ local strings = {
         shooter = "Xạ Thủ",
         tank = "Xe Tăng",
         speeder = "Tốc Độ",
+        splitter = "Phân Tách",
         boss = "Boss",
     }
 }
