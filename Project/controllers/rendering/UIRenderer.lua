@@ -1,14 +1,15 @@
 local C = require("utils.Constants")
 local L = require("utils.Localization")
+local FM = require("utils.FontManager")
 
 local UIRenderer = {}
 UIRenderer.__index = UIRenderer
 
 function UIRenderer.new()
     local self = setmetatable({}, UIRenderer)
-    self.bigFont = love.graphics.newFont(32)
-    self.medFont = love.graphics.newFont(20)
-    self.smallFont = love.graphics.newFont(14)
+    self.bigFont = FM.big()
+    self.medFont = FM.med()
+    self.smallFont = FM.small()
     self.selectedDifficulty = 2  -- 1=easy, 2=normal, 3=hard
 
     -- Clickable button regions: {id, x, y, w, h}
