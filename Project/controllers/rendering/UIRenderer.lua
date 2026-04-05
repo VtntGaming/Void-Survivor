@@ -141,6 +141,16 @@ function UIRenderer:drawHUD(player, score, wave, highScore, comboMult, comboBrea
             textColor = {0, 0, 0}
         })
     end
+    if player.magnet then
+        table.insert(puSlots, {
+            label = "MAG",
+            timer = player.magnetTimer,
+            maxTime = C.MAGNET_DURATION,
+            bgColor = {0.45, 0.15, 0.55, 0.9},
+            barColor = {0.85, 0.25, 1, 0.9},
+            textColor = {1, 1, 1}
+        })
+    end
     if player.weaponType ~= "normal" then
         table.insert(puSlots, {
             label = string.upper(player.weaponType),
@@ -367,6 +377,7 @@ function UIRenderer:drawGameOver(score, wave, highScore, isNewHighScore, killCou
             {name = "Shooter", key = "shooter", color = {0.7, 0.2, 1}},
             {name = "Tank", key = "tank", color = {1, 0.6, 0.1}},
             {name = "Speeder", key = "speeder", color = {1, 1, 0.2}},
+            {name = "Splitter", key = "splitter", color = {1, 0.25, 0.85}},
             {name = "Boss", key = "boss", color = {1, 0.3, 0.1}},
         }
         local ky = 270

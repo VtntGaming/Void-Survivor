@@ -1,6 +1,7 @@
 local Particles = require("systems.Particles")
 local Player = require("entities.Player")
 local C = require("utils.Constants")
+local Utils = require("utils.Utils")
 
 local EntityController = {}
 EntityController.__index = EntityController
@@ -52,6 +53,17 @@ function EntityController:update(dt, playerX, playerY)
     -- Update power-ups
     for i = #self.powerups, 1, -1 do
         local pu = self.powerups[i]
+
+        if self.player and self.player.magnet and pu.alive then
+            local dist = Utils.distance(self.player.x, self.player.y, pu.x, pu.y)
+            if dist <= self.player.magnetRange then
+                local dx, dy = Utils.normalize(self.player.x - pu.x, self.player.y - pu.y)
+                local pullStrength = self.player.magnetPullSpeed * (0.35 + 0.65 * (1 - dist / self.player.magnetRange))
+                pu.x = pu.x + dx * pullStrength * dt
+                pu.y = pu.y + dy * pullStrength * dt
+            end
+        end
+
         pu:update(dt)
         if not pu.alive then
             table.remove(self.powerups, i)

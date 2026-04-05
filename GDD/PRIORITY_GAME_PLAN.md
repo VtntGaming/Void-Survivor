@@ -110,18 +110,20 @@ UX / Menus
 4. CONTENT DEPTH - MORE ENEMY VARIETY
    Priority: P1
    Tasks:
-   - [TODO] Add 1-2 new elite enemies with unique attack patterns
+   - [DONE] Add 1 elite `Splitter` enemy with charge telegraph + split-on-death behavior
+   - [TODO] Add 1 more elite enemy with a distinct attack pattern
    - [TODO] Add mini-boss encounters before major boss waves
-   - [TODO] Add enemy-specific telegraphs or special effects
-   - [TODO] Add late-wave behavior modifiers (rage, split, shielded, etc.)
+   - [DONE] Add enemy-specific telegraphs or special effects for the new elite dash attack
+   - [TODO] Add more late-wave behavior modifiers (rage, split, shielded, etc.)
 
 5. MORE POWER-UPS / BUILD VARIETY
    Priority: P1
    Tasks:
-   - [TODO] Add magnet pickup, crit-shot, piercing, freeze and drone companions
+   - [DONE] Add magnet pickup with temporary pickup-attraction field
+   - [TODO] Add crit-shot, piercing, freeze and drone companions
    - [TODO] Add stackable or synergistic power-up interactions
    - [TODO] Add temporary ultimate pickups with strong short burst effects
-   - [TODO] Add weighted drop tables based on current player state
+   - [DONE] Add weighted drop tables based on current player state
 
 6. PROGRESSION / REPLAY LOOP
    Priority: P1

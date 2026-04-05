@@ -57,6 +57,11 @@ Constants.ENEMY = {
         radius = 8, speed = 200, hp = 20,
         damage = 8, score = 15, behavior = "chase"
     },
+    splitter = {
+        color = {1, 0.25, 0.85},
+        radius = 14, speed = 90, hp = 70,
+        damage = 14, score = 35, behavior = "splitter"
+    },
     boss = {
         color = {1, 0.1, 0.1},
         color2 = {1, 0.8, 0.1},
@@ -82,6 +87,9 @@ Constants.POWERUP_BOSS_DROP_COUNT = 2
 Constants.HEAL_AMOUNT = 25
 Constants.SPEED_BOOST_DURATION = 5
 Constants.RAPID_FIRE_DURATION = 5
+Constants.MAGNET_DURATION = 6
+Constants.MAGNET_RANGE = 180
+Constants.MAGNET_PULL_SPEED = 320
 
 -- Combo
 Constants.COMBO_WINDOW = 2.5       -- seconds to keep combo (was 2.0)

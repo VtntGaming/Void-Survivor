@@ -56,7 +56,7 @@ function GameController.new(appVersion)
     self.settingsReturnState = STATES.MENU
 
     -- Kill tracker
-    self.killCounts = {chaser = 0, shooter = 0, tank = 0, speeder = 0, boss = 0}
+    self.killCounts = {chaser = 0, shooter = 0, tank = 0, speeder = 0, splitter = 0, boss = 0}
 
     -- Apply saved volume
     self.audio:setVolume(self.save:getSfxVolume())
@@ -114,7 +114,7 @@ function GameController:startGame()
     self.wave:reset()
     self.wave:start()
     self.isNewHighScore = false
-    self.killCounts = {chaser = 0, shooter = 0, tank = 0, speeder = 0, boss = 0}
+    self.killCounts = {chaser = 0, shooter = 0, tank = 0, speeder = 0, splitter = 0, boss = 0}
     self.screenFlash = 0
     Particles.clear()
 
