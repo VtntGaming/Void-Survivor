@@ -20,8 +20,9 @@ local STATES = StateController.STATES
 local GameController = {}
 GameController.__index = GameController
 
-function GameController.new()
+function GameController.new(appVersion)
     local self = setmetatable({}, GameController)
+    self.appVersion = appVersion or "dev"
 
     -- Event bus
     self.eventBus = EventBus.new()
@@ -198,7 +199,11 @@ function GameController:draw()
     local currentState = self.state:get()
 
     if currentState == STATES.MENU then
-        self.render:drawTitle(self.save:getHighScore(), C.DIFFICULTY_LIST[self.selectedDiffIdx])
+        self.render:drawTitle(
+            self.save:getHighScore(),
+            C.DIFFICULTY_LIST[self.selectedDiffIdx],
+            self.appVersion
+        )
 
     elseif currentState == STATES.SETTINGS then
         self.render:drawSettings(

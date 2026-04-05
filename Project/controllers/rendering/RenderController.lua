@@ -106,8 +106,8 @@ function RenderController:drawGame(entities, waveCtrl, scoreCtrl, saveCtrl, scre
     love.graphics.setColor(1, 1, 1)
 end
 
-function RenderController:drawTitle(highScore, difficulty)
-    self.ui:drawTitle(highScore, difficulty)
+function RenderController:drawTitle(highScore, difficulty, version)
+    self.ui:drawTitle(highScore, difficulty, version)
 end
 
 function RenderController:drawPause()
