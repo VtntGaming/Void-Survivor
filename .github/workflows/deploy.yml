@@ -1,0 +1,68 @@
+name: Deploy Void Survivor
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Prepare build folders
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          New-Item -ItemType Directory -Force -Path dist\win64 | Out-Null
+
+      - name: Package Love2D game
+        shell: pwsh
+        run: |
+          if (Test-Path "dist\Void-Survivor.zip") {
+            Remove-Item "dist\Void-Survivor.zip" -Force
+          }
+
+          Compress-Archive -Path "Project\*" -DestinationPath "dist\Void-Survivor.zip" -Force
+          Move-Item "dist\Void-Survivor.zip" "dist\Void-Survivor.love" -Force
+
+      - name: Build portable Windows package
+        shell: pwsh
+        run: |
+          Copy-Item "Engine\love-11.5-win64\*" "dist\win64" -Recurse -Force
+          cmd /c copy /b "dist\win64\love.exe" + "dist\Void-Survivor.love" "dist\win64\Void-Survivor.exe" > nul
+          Remove-Item "dist\win64\love.exe" -Force
+          Compress-Archive -Path "dist\win64\*" -DestinationPath "dist\Void-Survivor-windows.zip" -Force
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-survivor-main-build
+          path: |
+            dist/Void-Survivor.love
+            dist/Void-Survivor-windows.zip
+          if-no-files-found: error
+
+      - name: Publish latest GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: main-latest
+          name: Latest main build
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          removeArtifacts: true
+          generateReleaseNotes: true
+          artifactErrorsFailBuild: true
+          artifacts: "dist/Void-Survivor.love,dist/Void-Survivor-windows.zip"
